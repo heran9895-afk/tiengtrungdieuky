@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Từ vựng Thương binh Liệt sĩ - 奇妙汉语</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;600;700;800&family=Noto+Serif+SC:wght@700;900&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  /* ========== FIXED HEADER ========== */
+  .site-header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 9999;
+    background: linear-gradient(135deg, #eaf8ef 0%, #b9e0c6 40%, #f0c766 100%);
+    border-bottom: 4px solid #0b5a2a;
+    overflow: hidden;
+  }
+  .site-header::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse at 0% 0%, rgba(255,255,255,0.35) 0%, transparent 60%),
+      radial-gradient(ellipse at 100% 100%, rgba(255,220,80,0.18) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 28px;
+    gap: 16px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Logo block */
+  .logo-block { display: flex; align-items: center; gap: 14px; text-decoration: none; }
+  .logo-img-wrap {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    border: 3px solid #0b5a2a;
+    box-shadow: 0 0 0 3px #e2ad28, 0 4px 16px rgba(0,0,0,.2);
+    overflow: hidden; flex-shrink: 0;
+    background: #fff;
+  }
+  .logo-img-wrap img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+  .logo-text { display: flex; flex-direction: column; gap: 2px; }
+  .logo-cn {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 26px; font-weight: 900;
+    color: #0b5a2a; line-height: 1.1;
+    letter-spacing: 2px;
+  }
+  .logo-dots { color: #e2ad28; font-size: 10px; letter-spacing: 4px; margin: 1px 0; }
+  .logo-vi {
+    font-family: 'Quicksand', sans-serif;
+    font-size: 11px; font-weight: 700;
+    color: #b31916; letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* Slogan block */
+  .slogan-block { text-align: center; flex: 1; }
+  .slogan-main {
+    font-family: 'Noto Serif SC', serif;
+    font-size: 16px; font-weight: 700;
+    color: #0b5a2a; letter-spacing: 1px;
+  }
+  .slogan-leaf { color: #e2ad28; font-size: 14px; }
+  .slogan-divider {
+    display: flex; align-items: center; justify-content: center;
+    gap: 6px; margin: 4px 0;
+  }
+  .slogan-divider .line {
+    height: 1px; width: 60px;
+    background: linear-gradient(90deg, transparent, #0b5a2a);
+  }
+  .slogan-divider .line.right { background: linear-gradient(90deg, #0b5a2a, transparent); }
+  .slogan-divider .diamond { color: #e2ad28; font-size: 8px; }
+  .slogan-teacher {
+    font-family: 'Quicksand', sans-serif;
+    font-size: 12px; color: #555;
+  }
+  .slogan-teacher span { color: #b31916; font-weight: 700; }
+
+  /* Contact block */
+  .contact-block { display: flex; flex-direction: column; gap: 8px; flex-shrink: 0; }
+  .btn-contact {
+    display: flex; align-items: center; gap: 10px;
+    padding: 7px 14px; border-radius: 30px;
+    border: 2px solid; background: #fff;
+    text-decoration: none; transition: all 0.25s;
+    min-width: 185px; font-family: 'Quicksand', sans-serif;
+  }
+  .btn-contact:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,.15); }
+  .btn-zalo { border-color: #0068FF; color: #0068FF; }
+  .btn-zalo:hover { background: #0068FF; color: #fff; }
+  .btn-facebook { border-color: #1877F2; color: #1877F2; }
+  .btn-facebook:hover { background: #1877F2; color: #fff; }
+  .btn-icon {
+    width: 30px; height: 30px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; font-weight: 900; flex-shrink: 0;
+    color: #fff;
+  }
+  .btn-zalo .btn-icon { background: #0068FF; }
+  .btn-facebook .btn-icon { background: #1877F2; }
+  .btn-zalo:hover .btn-icon { background: #fff; color: #0068FF; }
+  .btn-facebook:hover .btn-icon { background: #fff; color: #1877F2; }
+  .btn-text { display: flex; flex-direction: column; line-height: 1.3; }
+  .btn-text .t1 { font-size: 10px; font-weight: 600; opacity: 0.8; }
+  .btn-text .t2 { font-size: 13px; font-weight: 700; }
+
+  /* Responsive header */
+  @media (max-width: 850px) {
+    .header-top { flex-wrap: wrap; padding: 8px 16px; }
+    .slogan-block { order: 3; width: 100%; }
+    .logo-img-wrap { width: 68px; height: 68px; }
+    .logo-cn { font-size: 22px; }
+  }
+  @media (max-width: 560px) {
+    .logo-cn { font-size: 18px; }
+    .logo-img-wrap { width: 56px; height: 56px; }
+    .slogan-main { font-size: 13px; }
+    .btn-contact { min-width: 150px; padding: 6px 10px; }
+    .btn-text .t2 { font-size: 11px; }
+  }
+
+  /* ========== BODY & CONTENT ========== */
+  body {
+    font-family: 'Be Vietnam Pro', sans-serif;
+    background: linear-gradient(135deg, #1a0000 0%, #3d0000 40%, #1a0000 100%);
+    min-height: 100vh;
+    padding-top: 130px; /* Đẩy xuống dưới header */
+    padding-bottom: 30px;
+  }
+  @media (max-width: 850px) { body { padding-top: 170px; } }
+  @media (max-width: 560px) { body { padding-top: 190px; } }
+
+  .page-content { padding: 20px 20px 0; }
+  .page-header { text-align: center; margin-bottom: 32px; }
+  .page-header .date-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #ffd700, #ffb300);
+    color: #7b0000; font-weight: 800; font-size: 15px;
+    padding: 6px 20px; border-radius: 20px; margin-bottom: 12px; letter-spacing: 1px;
+  }
+  .page-header h1 { font-size: 26px; font-weight: 800; color: #ffd700; text-shadow: 0 2px 8px rgba(0,0,0,0.5); line-height: 1.4; }
+  .page-header h2 { font-size: 17px; color: #ffcdd2; font-weight: 400; margin-top: 6px; }
+  .star-row { font-size: 22px; margin: 10px 0 0; letter-spacing: 6px; }
+
+  .tab-nav { display: flex; justify-content: center; gap: 10px; margin-bottom: 28px; flex-wrap: wrap; }
+  .tab-btn {
+    padding: 9px 22px; border-radius: 25px; border: 2px solid rgba(255,215,0,0.4);
+    background: rgba(255,255,255,0.06); color: #ffd700; font-size: 14px; font-weight: 700;
+    cursor: pointer; transition: all 0.25s; font-family: 'Be Vietnam Pro', sans-serif;
+  }
+  .tab-btn:hover { background: rgba(255,215,0,0.15); }
+  .tab-btn.active { background: linear-gradient(135deg, #ffd700, #ffb300); color: #7b0000; border-color: #ffd700; }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  .logo-url { --logo: url("https://d41chssnpqdne.cloudfront.net/user_upload_by_module/chat_bot/files/144343535/Yeiiwyfv22KnHhNx.png?Expires=1786263245&Signature=XdaRam7s0wmvd~OLEjUhsg4uAeHhJtiM34RG9ZYe6C8jtEs4akckIVsNHrbV4bHeZqQB151b5Mj0eF6RaopZZzhmalXsTlnp8Y-Wj9mQa4oVkoQdVocSAjX0SY8nQVRZh8mxaP61gKn6dg~adyAyCEWqFYjgFdkLptNBfu5Hfu3mR4ordJCQ3DBpghPkyl0teinkGboyWUfvVBvfDrhavebZ0Rb2JmwtjnPTch08-ueKZEYyLMY-ovQKqT1cxiWJzNpYo4~n33ZfXf6LcezLBJfb-xyOlw5UigtXP5w-0iWxv~A75KvrlQFbDidWAGGKEfbzAsIhfAvsG1cHx1A0qg__&Key-Pair-Id=K3USGZIKWMDCSX"); }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; max-width: 1100px; margin: 0 auto; }
+
+  .section {
+    position: relative;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,215,0,0.25);
+    border-radius: 16px; overflow: hidden; backdrop-filter: blur(6px);
+  }
+  .section::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: var(--logo);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 55%;
+    opacity: 0.07;
+    pointer-events: none; z-index: 0;
+  }
+  .section > * { position: relative; z-index: 1; }
+
+  .section-header { padding: 12px 18px; display: flex; align-items: center; gap: 10px; }
+  .section-header .icon { font-size: 22px; }
+  .section-header .title { font-size: 15px; font-weight: 700; color: #fff; }
+  .section-header .title-vi { font-size: 12px; color: rgba(255,255,255,0.65); font-weight: 400; }
+  .s1 .section-header { background: linear-gradient(90deg, #b71c1c, #d32f2f); }
+  .s2 .section-header { background: linear-gradient(90deg, #880e4f, #ad1457); }
+  .s3 .section-header { background: linear-gradient(90deg, #4a148c, #6a1b9a); }
+  .s4 .section-header { background: linear-gradient(90deg, #1a237e, #283593); }
+  .s5 .section-header { background: linear-gradient(90deg, #004d40, #00695c); }
+  .s6 .section-header { background: linear-gradient(90deg, #e65100, #ef6c00); }
+
+  .word-list { padding: 10px 14px 14px; }
+  .word-item { display: flex; align-items: baseline; gap: 10px; padding: 8px 10px; border-radius: 10px; margin-bottom: 6px; background: rgba(255,255,255,0.04); transition: background 0.2s; }
+  .word-item:hover { background: rgba(255,215,0,0.1); }
+  .word-item:last-child { margin-bottom: 0; }
+  .chinese { font-size: 20px; font-weight: 700; color: #ffd700; min-width: 80px; line-height: 1.3; }
+  .pinyin { font-size: 12px; color: #ffab91; font-style: italic; min-width: 90px; }
+  .meaning { font-size: 13px; color: #e0e0e0; flex: 1; }
+
+  .examples-wrap { max-width: 860px; margin: 0 auto; }
+  .ex-intro { text-align: center; color: #ffcdd2; font-size: 14px; margin-bottom: 22px; line-height: 1.7; }
+
+  .ex-card {
+    position: relative;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,215,0,0.2);
+    border-radius: 18px; padding: 20px 24px; margin-bottom: 16px;
+    backdrop-filter: blur(6px); overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .ex-card::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: var(--logo);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 40%;
+    opacity: 0.07;
+    pointer-events: none; z-index: 0;
+  }
+  .ex-card > * { position: relative; z-index: 1; }
+  .ex-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+
+  .ex-num { font-size: 13px; color: #ffd700; font-weight: 700; margin-bottom: 8px; opacity: 0.8; }
+  .ex-zh { font-size: 22px; font-weight: 700; color: #ffd700; line-height: 1.5; margin-bottom: 4px; }
+  .ex-py { font-size: 13px; color: #ffab91; font-style: italic; margin-bottom: 8px; line-height: 1.7; }
+  .ex-vi {
+    font-size: 14px; color: #e0e0e0; line-height: 1.6;
+    border-top: 1px solid rgba(255,255,255,0.1); padding-top: 8px; margin-top: 4px;
+  }
+  .ex-vi span { color: #80cbc4; font-style: italic; }
+  .highlight { color: #ffd700; font-weight: 700; }
+
+  .footer { text-align: center; margin-top: 28px; color: rgba(255,255,255,0.4); font-size: 13px; padding-bottom: 20px; }
+  .footer span { color: #ffd700; font-weight: 700; }
+</style>
+</head>
+<body class="logo-url">
+
+<!-- ========== FIXED HEADER ========== -->
+<header class="site-header">
+  <div class="header-top">
+
+    <!-- Logo -->
+    <a class="logo-block" href="#">
+      <div class="logo-img-wrap">
+        <img src="https://d41chssnpqdne.cloudfront.net/user_upload_by_module/chat_bot/files/144343535/Yeiiwyfv22KnHhNx.png?Expires=1786263245&Signature=XdaRam7s0wmvd~OLEjUhsg4uAeHhJtiM34RG9ZYe6C8jtEs4akckIVsNHrbV4bHeZqQB151b5Mj0eF6RaopZZzhmalXsTlnp8Y-Wj9mQa4oVkoQdVocSAjX0SY8nQVRZh8mxaP61gKn6dg~adyAyCEWqFYjgFdkLptNBfu5Hfu3mR4ordJCQ3DBpghPkyl0teinkGboyWUfvVBvfDrhavebZ0Rb2JmwtjnPTch08-ueKZEYyLMY-ovQKqT1cxiWJzNpYo4~n33ZfXf6LcezLBJfb-xyOlw5UigtXP5w-0iWxv~A75KvrlQFbDidWAGGKEfbzAsIhfAvsG1cHx1A0qg__&Key-Pair-Id=K3USGZIKWMDCSX" alt="Logo 奇妙汉语"/>
+      </div>
+      <div class="logo-text">
+        <div class="logo-cn">奇妙汉语</div>
+        <div class="logo-dots">• • •</div>
+        <div class="logo-vi">TIẾNG TRUNG DIỆU KỲ</div>
+      </div>
+    </a>
+
+    <!-- Slogan -->
+    <div class="slogan-block">
+      <div class="slogan-main">
+        <span class="slogan-leaf">❧</span>
+        奇妙汉语，学语言悟人生
+        <span class="slogan-leaf">❧</span>
+      </div>
+      <div class="slogan-divider">
+        <div class="line"></div>
+        <div class="diamond">◆</div>
+        <div class="line right"></div>
+      </div>
+      <div class="slogan-teacher">Giáo viên | <span>Nguyễn Hà Nhiên</span></div>
+    </div>
+
+    <!-- Contact -->
+    <div class="contact-block">
+      <a class="btn-contact btn-zalo" href="https://zalo.me/0973754714" target="_blank">
+        <div class="btn-icon">Z</div>
+        <div class="btn-text">
+          <span class="t1">Liên hệ qua</span>
+          <span class="t2">Zalo: 0973754714</span>
+        </div>
+      </a>
+      <a class="btn-contact btn-facebook" href="https://www.facebook.com/profile.php?id=61591127255931" target="_blank">
+        <div class="btn-icon">f</div>
+        <div class="btn-text">
+          <span class="t1">Theo dõi trên</span>
+          <span class="t2">Facebook</span>
+        </div>
+      </a>
+    </div>
+
+  </div>
+</header>
+
+<!-- ========== PAGE CONTENT ========== -->
+<div class="page-content">
+
+  <div class="page-header">
+    <div class="date-badge">🗓️ 27 THÁNG 7</div>
+    <h1>Ngày Thương binh Liệt sĩ Việt Nam<br>荣军烈士节</h1>
+    <h2>Từ vựng &amp; Câu ví dụ Tiếng Trung</h2>
+    <div class="star-row">★ ★ ★ ★ ★</div>
+  </div>
+
+  <div class="tab-nav">
+    <button class="tab-btn active" onclick="switchTab('vocab', this)">📚 Từ vựng</button>
+    <button class="tab-btn" onclick="switchTab('examples', this)">✍️ Câu ví dụ</button>
+  </div>
+
+  <!-- TAB TỪ VỰNG -->
+  <div id="tab-vocab" class="tab-content active">
+    <div class="grid">
+
+      <div class="section s1 logo-url">
+        <div class="section-header"><span class="icon">⚔️</span><div><div class="title">Chiến tranh &amp; Chiến đấu</div><div class="title-vi">战争与战斗</div></div></div>
+        <div class="word-list">
+          <div class="word-item"><span class="chinese">战争</span><span class="pinyin">zhànzhēng</span><span class="meaning">Chiến tranh</span></div>
+          <div class="word-item"><span class="chinese">战斗</span><span class="pinyin">zhàndòu</span><span class="meaning">Chiến đấu</span></div>
+          <div class="word-item"><span class="chinese">战场</span><span class="pinyin">zhànchǎng</span><span class="meaning">Chiến trường</span></div>
+          <div class="word-item"><span class="chinese">战役</span><span class="pinyin">zhànyì</span><span class="meaning">Chiến dịch, trận đánh</span></div>
+          <div class="word-item"><span class="chinese">牺牲</span><span class="pinyin">xīshēng</span><span class="meaning">Hy sinh</span></div>
+          <div class="word-item"><span class="chinese">阵亡</span><span class="pinyin">zhènwáng</span><span class="meaning">Tử trận</span></div>
+        </div>
+      </div>
+
+      <div class="section s2 logo-url">
+        <div class="section-header"><span class="icon">🎖️</span><div><div class="title">Người lính &amp; Thương binh</div><div class="title-vi">士兵与伤残军人</div></div></div>
+        <div class="word-list">
+          <div class="word-item"><span class="chinese">士兵</span><span class="pinyin">shìbīng</span><span class="meaning">Người lính, binh sĩ</span></div>
+          <div class="word-item"><span class="chinese">军人</span><span class="pinyin">jūnrén</span><span class="meaning">Quân nhân</span></div>
+          <div class="word-item"><span class="chinese">伤残军人</span><span class="pinyin">shāngcán jūnrén</span><span class="meaning">Thương binh</span></div>
+          <div class="word-item"><span class="chinese">烈士</span><span class="pinyin">lièshì</span><span class="meaning">Liệt sĩ</span></div>
+          <div class="word-item"><span class="chinese">英雄</span><span class="pinyin">yīngxióng</span><span class="meaning">Anh hùng</span></div>
+          <div class="word-item"><span class="chinese">战士</span><span class="pinyin">zhànshì</span><span class="meaning">Chiến sĩ</span></div>
+        </div>
+      </div>
+
+      <div class="section s3 logo-url">
+        <div class="section-header"><span class="icon">🕯️</span><div><div class="title">Tưởng niệm &amp; Tri ân</div><div class="title-vi">纪念与感恩</div></div></div>
+        <div class="word-list">
+          <div class="word-item"><span class="chinese">纪念</span><span class="pinyin">jìniàn</span><span class="meaning">Tưởng niệm, kỷ niệm</span></div>
+          <div class="word-item"><span class="chinese">悼念</span><span class="pinyin">dàoniàn</span><span class="meaning">Tưởng nhớ, thương tiếc</span></div>
+          <div class="word-item"><span class="chinese">缅怀</span><span class="pinyin">miǎnhuái</span><span class="meaning">Tưởng nhớ, hoài niệm</span></div>
+          <div class="word-item"><span class="chinese">感恩</span><span class="pinyin">gǎn'ēn</span><span class="meaning">Biết ơn, tri ân</span></div>
+          <div class="word-item"><span class="chinese">致敬</span><span class="pinyin">zhìjìng</span><span class="meaning">Tỏ lòng kính trọng</span></div>
+          <div class="word-item"><span class="chinese">默哀</span><span class="pinyin">mò'āi</span><span class="meaning">Mặc niệm</span></div>
+        </div>
+      </div>
+
+      <div class="section s4 logo-url">
+        <div class="section-header"><span class="icon">🏛️</span><div><div class="title">Địa điểm &amp; Nghi lễ</div><div class="title-vi">地点与仪式</div></div></div>
+        <div class="word-list">
+          <div class="word-item"><span class="chinese">烈士陵园</span><span class="pinyin">lièshì língyuán</span><span class="meaning">Nghĩa trang liệt sĩ</span></div>
+          <div class="word-item"><span class="chinese">纪念碑</span><span class="pinyin">jìniànbēi</span><span class="meaning">Đài tưởng niệm</span></div>
+          <div class="word-item"><span class="chinese">墓地</span><span class="pinyin">mùdì</span><span class="meaning">Nghĩa trang, mộ địa</span></div>
+          <div class="word-item"><span class="chinese">祭扫</span><span class="pinyin">jìsǎo</span><span class="meaning">Viếng mộ, quét mộ</span></div>
+          <div class="word-item"><span class="chinese">仪式</span><span class="pinyin">yíshì</span><span class="meaning">Nghi lễ</span></div>
+          <div class="word-item"><span class="chinese">献花</span><span class="pinyin">xiànhuā</span><span class="meaning">Dâng hoa</span></div>
+        </div>
+      </div>
+
+      <div class="section s5 logo-url">
+        <div class="section-header"><span class="icon">🕊️</span><div><div class="title">Hòa bình &amp; Tổ quốc</div><div class="title-vi">和平与祖国</div></div></div>
+        <div class="word-list">
+          <div class="word-item"><span class="chinese">和平</span><span class="pinyin">hépíng</span><span class="meaning">Hòa bình</span></div>
+          <div class="word-item"><span class="chinese">祖国</span><span class="pinyin">zǔguó</span><span class="meaning">Tổ quốc</span></div>
+          <div class="word-item"><span class="chinese">独立</span><span class="pinyin">dúlì</span><span class="meaning">Độc lập</span></div>
+          <div class="word-item"><span class="chinese">自由</span><span class="pinyin">zìyóu</span><span class="meaning">Tự do</span></div>
+          <div class="word-item"><span class="chinese">保卫</span><span class="pinyin">bǎowèi</span><span class="meaning">Bảo vệ</span></div>
+          <div class="word-item"><span class="chinese">爱国</span><span class="pinyin">àiguó</span><span class="meaning">Yêu nước</span></div>
+        </div>
+      </div>
+
+      <div class="section s6 logo-url">
+        <div class="section-header"><span class="icon">💛</span><div><div class="title">Tình cảm &amp; Tinh thần</div><div class="title-vi">情感与精神</div></div></div>
+        <div class="word-list">
+          <div class="word-item"><span class="chinese">勇敢</span><span class="pinyin">yǒnggǎn</span><span class="meaning">Dũng cảm</span></div>
+          <div class="word-item"><span class="chinese">奉献</span><span class="pinyin">fèngxiàn</span><span class="meaning">Cống hiến, dâng hiến</span></div>
+          <div class="word-item"><span class="chinese">荣誉</span><span class="pinyin">róngyù</span><span class="meaning">Vinh dự, danh dự</span></div>
+          <div class="word-item"><span class="chinese">精神</span><span class="pinyin">jīngshén</span><span class="meaning">Tinh thần</span></div>
+          <div class="word-item"><span class="chinese">悲痛</span><span class="pinyin">bēitòng</span><span class="meaning">Đau buồn, bi thương</span></div>
+          <div class="word-item"><span class="chinese">铭记</span><span class="pinyin">míngjì</span><span class="meaning">Khắc ghi, ghi nhớ mãi</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TAB CÂU VÍ DỤ -->
+  <div id="tab-examples" class="tab-content">
+    <div class="examples-wrap">
+      <div class="ex-intro">
+        🌹 5 câu ví dụ thể hiện <strong style="color:#ffd700">lòng biết ơn &amp; tưởng nhớ</strong> — sắp xếp từ dễ đến khó<br>
+        <span style="color:rgba(255,255,255,0.5)">Mỗi câu có chữ Hán · Pinyin · Nghĩa tiếng Việt</span>
+      </div>
+
+      <div class="ex-card logo-url">
+        <div class="ex-num">Câu 1</div>
+        <div class="ex-zh">我们 <span class="highlight">感谢</span> 烈士们的 <span class="highlight">牺牲</span>。</div>
+        <div class="ex-py">Wǒmen <span class="highlight">gǎnxiè</span> lièshìmen de <span class="highlight">xīshēng</span>.</div>
+        <div class="ex-vi">Chúng ta <span>biết ơn</span> sự <span>hy sinh</span> của các liệt sĩ.<br><span>📌 感谢 (biết ơn) · 牺牲 (hy sinh)</span></div>
+      </div>
+
+      <div class="ex-card logo-url">
+        <div class="ex-num">Câu 2</div>
+        <div class="ex-zh">今天，我们去 <span class="highlight">烈士陵园</span> <span class="highlight">献花</span>，<span class="highlight">悼念</span> 英雄们。</div>
+        <div class="ex-py">Jīntiān, wǒmen qù <span class="highlight">lièshì língyuán</span> <span class="highlight">xiànhuā</span>, <span class="highlight">dàoniàn</span> yīngxióngmen.</div>
+        <div class="ex-vi">Hôm nay, chúng ta đến <span>nghĩa trang liệt sĩ</span> <span>dâng hoa</span>, <span>tưởng nhớ</span> các anh hùng.<br><span>📌 烈士陵园 · 献花 · 悼念</span></div>
+      </div>
+
+      <div class="ex-card logo-url">
+        <div class="ex-num">Câu 3</div>
+        <div class="ex-zh">我们应该 <span class="highlight">铭记</span> 那些为 <span class="highlight">祖国独立</span> 而 <span class="highlight">英勇牺牲</span> 的战士们。</div>
+        <div class="ex-py">Wǒmen yīnggāi <span class="highlight">míngjì</span> nàxiē wèi <span class="highlight">zǔguó dúlì</span> ér <span class="highlight">yīngyǒng xīshēng</span> de zhànshìmen.</div>
+        <div class="ex-vi">Chúng ta nên <span>khắc ghi</span> những chiến sĩ đã <span>anh dũng hy sinh</span> vì <span>độc lập của Tổ quốc</span>.<br><span>📌 铭记 · 祖国独立 · 英勇牺牲</span></div>
+      </div>
+
+      <div class="ex-card logo-url">
+        <div class="ex-num">Câu 4</div>
+        <div class="ex-zh">正是因为无数 <span class="highlight">英烈</span> 的 <span class="highlight">无私奉献</span>，我们今天才能享受 <span class="highlight">和平</span> 与 <span class="highlight">自由</span> 的生活。</div>
+        <div class="ex-py">Zhèngshì yīnwèi wúshù <span class="highlight">yīngliè</span> de <span class="highlight">wúsī fèngxiàn</span>, wǒmen jīntiān cái néng xiǎngshòu <span class="highlight">hépíng</span> yǔ <span class="highlight">zìyóu</span> de shēnghuó.</div>
+        <div class="ex-vi">Chính nhờ sự <span>cống hiến vô tư</span> của vô số <span>anh hùng liệt sĩ</span>, ngày hôm nay chúng ta mới được tận hưởng cuộc sống <span>hòa bình</span> và <span>tự do</span>.<br><span>📌 英烈 · 无私奉献 · 正是…才…</span></div>
+      </div>
+
+      <div class="ex-card logo-url">
+        <div class="ex-num">Câu 5</div>
+        <div class="ex-zh">在这个 <span class="highlight">缅怀先烈</span> 的特殊日子里，我们 <span class="highlight">肃然起敬</span>，深刻体会到 <span class="highlight">和平来之不易</span>，誓将 <span class="highlight">铭记历史</span>，<span class="highlight">珍惜当下</span>。</div>
+        <div class="ex-py">Zài zhège <span class="highlight">miǎnhuái xiānliè</span> de tèshū rìzi lǐ, wǒmen <span class="highlight">sùrán qǐjìng</span>, shēnkè tǐhuì dào <span class="highlight">hépíng lái zhī bù yì</span>, shì jiāng <span class="highlight">míngjì lìshǐ</span>, <span class="highlight">zhēnxī dāngxià</span>.</div>
+        <div class="ex-vi">Trong ngày đặc biệt <span>tưởng nhớ các tiền nhân anh hùng</span> này, chúng ta <span>thành kính nghiêng mình</span>, thấm thía rằng <span>hòa bình không dễ có được</span>, thề sẽ <span>khắc ghi lịch sử</span> và <span>trân trọng hiện tại</span>.<br><span>📌 缅怀先烈 · 肃然起敬 · 来之不易 · 珍惜当下</span></div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="footer">
+    <p>🌹 Tri ân các <span>Anh hùng Liệt sĩ</span> đã ngã xuống vì Tổ quốc 🌹</p>
+    <p style="margin-top:6px;">奇妙汉语 · Tiếng Trung Diệu Kỳ</p>
+  </div>
+
+</div><!-- end page-content -->
+
+<script>
+  function switchTab(tab, btn) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+    document.getElementById('tab-' + tab).classList.add('active');
+    btn.classList.add('active');
+  }
+</script>
+</body>
+</html>
