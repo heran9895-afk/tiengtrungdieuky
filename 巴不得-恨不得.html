@@ -1,0 +1,133 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>So sánh 巴不得 / 恨不得 - 奇妙汉语</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700;900&family=Quicksand:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--green:#0b5a2a;--red:#dc2626;--purple:#7c3aed;--gold:#e2ad28;--blue:#075985;--lightblue:#dff1ff;--bg:#f3f4f8;--dark:#111827}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Quicksand,Arial,sans-serif;color:var(--dark)}
+.header{background:linear-gradient(135deg,#eaf8ef 0%,#b9e0c6 42%,#f0c766 100%);border-bottom:4px solid var(--green);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:18px;position:relative;overflow:hidden}.brand{display:flex;align-items:center;gap:12px}.logo{width:92px;height:92px;border-radius:50%;background:#fff;border:3px solid var(--green);outline:3px solid var(--gold);display:flex;align-items:center;justify-content:center;color:var(--green);font-family:'Noto Serif SC';font-weight:900;font-size:18px;text-align:center;line-height:1.15}.brand h1{margin:0;color:var(--green);font-family:'Noto Serif SC';font-size:28px}.dots{color:var(--gold);letter-spacing:5px;font-weight:900}.brand p{margin:3px 0 0;color:#b31916;font-weight:800;font-size:13px}.slogan{text-align:center;flex:1}.slogan .cn{font-family:'Noto Serif SC';color:var(--green);font-weight:900}.slogan .role{font-size:11px;letter-spacing:2px;color:#6b7280;font-weight:800;margin-top:6px}.slogan .teacher{color:#b31916;font-weight:800}.contacts{display:flex;flex-direction:column;gap:8px}.contacts a{text-decoration:none;background:#fff;border-radius:999px;padding:8px 16px;color:#0f172a;font-size:13px;font-weight:800;box-shadow:0 3px 8px #0001}.tabs{display:flex;position:sticky;top:0;z-index:5}.tab{flex:1;border:0;padding:16px;font-weight:900;color:white;cursor:pointer;background:#4b5563}.tab.active{background:#ea580c}.wrap{max-width:980px;margin:18px auto;padding:0 12px}.panel{display:none}.panel.active{display:block}.card{background:white;border-radius:12px;padding:22px;margin-bottom:18px;box-shadow:0 4px 14px #0001;position:relative;overflow:hidden}.card:before{content:'奇妙汉语';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:'Noto Serif SC';font-size:80px;color:var(--green);opacity:.045;pointer-events:none}.card>*{position:relative}.h2{font-size:22px;color:#075985;font-weight:900;margin:0 0 16px}.common{background:#e6e6fa;border-radius:8px;padding:14px;color:#4338ca;font-weight:700}.example-box{background:#fff3dc;border-left:4px solid #f97316;padding:12px;border-radius:8px;margin-top:12px}.ex{background:#fff;border-radius:8px;padding:12px;margin:10px 0}.cn{font-family:'Noto Serif SC','Microsoft YaHei',serif}.han{font-family:'Noto Serif SC','Microsoft YaHei',serif;font-size:17px;font-weight:800}.py{color:#64748b;font-size:13px;margin-top:3px}.vi{color:#4338ca;line-height:1.65}.word-a{color:var(--red);font-weight:900}.word-b{color:var(--purple);font-weight:900}.obj{color:#16a34a;font-weight:900}.diff-title{background:#dff1ff;color:#075985;border-radius:8px;padding:13px 16px;font-weight:900;margin:18px 0 16px}.compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.compare-card{border-radius:10px;padding:18px}.a-card{background:#fff1f2;border:1px solid #fecaca}.b-card{background:#f3e8ff;border:1px solid #e9d5ff}.compare-card h3{border-bottom:2px solid currentColor;padding-bottom:12px;margin-top:0}.summary table{width:100%;border-collapse:collapse}.summary th,.summary td{border:1px solid #d1d5db;padding:12px;text-align:center}.summary th{background:#eff6ff}.summary td:first-child{text-align:left;font-weight:700}.quiz-note{background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:13px;margin-bottom:14px}.quiz-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.q{border:1px solid #e5e7eb;border-radius:8px;padding:14px;background:#fff}.q-title{font-family:'Noto Serif SC';font-weight:800;margin-bottom:8px}.opts label{display:inline-flex;gap:5px;margin-right:14px;font-weight:800}.actions{display:flex;gap:10px;margin-top:16px}.actions button{border:0;border-radius:8px;padding:11px 18px;font-weight:900;cursor:pointer}.submit{background:#0b5a2a;color:white}.reset{background:#e5e7eb}.answer{display:none;margin-top:10px;border-radius:8px;padding:10px;line-height:1.6}.answer.show{display:block}.correct{background:#ecfdf5;border:1px solid #86efac}.wrong{background:#fff1f2;border:1px solid #fecaca}.score{font-weight:900;color:#075985;margin-top:12px}
+/* FIX FONT TIẾNG VIỆT RIÊNG CHO PHẦN BÀI TẬP */
+#practice, #practice .quiz-note, #practice .quiz-note .vi, #practice .actions button,
+#practice .answer, #practice .answer b, #practice .score,
+#practice .correct, #practice .wrong {
+  font-family: 'Quicksand', 'Be Vietnam Pro', Arial, Helvetica, sans-serif !important;
+}
+#practice .q-title, #practice .opts label {
+  font-family: 'Noto Serif SC','Microsoft YaHei',serif !important;
+}
+#practice .answer .cn {
+  font-family: 'Noto Serif SC','Microsoft YaHei',serif !important;
+}
+
+
+/* FIX BỐ CỤC VÍ DỤ PHẦN ĐIỂM CHUNG */
+.common-examples-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.common-examples-grid .ex{margin:0}
+.dialogue-line{display:block;margin-bottom:4px}
+/* FIX PHIÊN ÂM INLINE CHO HỘI THOẠI A-B */
+.py-inline{font-family:Quicksand,Arial,sans-serif;font-size:13px;color:#64748b;font-weight:600;margin-left:8px}
+
+@media(max-width:760px){.common-examples-grid{grid-template-columns:1fr}}
+
+@media(max-width:760px){.header{flex-direction:column}.contacts{flex-direction:row;flex-wrap:wrap;justify-content:center}.compare-grid,.quiz-grid{grid-template-columns:1fr}.brand h1{font-size:24px}.logo{width:78px;height:78px}.card:before{font-size:48px}}
+
+/* === FIX TRIỆT ĐỂ FONT TIẾNG VIỆT Ở PHẦN BÀI TẬP ===
+   Không dùng font Hán cho các chữ tiếng Việt trong khu vực practice. */
+#practice,
+#practice .vi,
+#practice .quiz-note,
+#practice .quiz-note span,
+#practice .actions button,
+#practice .answer,
+#practice .answer .vi,
+#practice .score,
+#practice #score,
+#practice b.vi {
+  font-family: Arial, Helvetica, "Segoe UI", Tahoma, sans-serif !important;
+}
+#practice .han,
+#practice .cn,
+#practice .q-title,
+#practice .opts label {
+  font-family: "Noto Serif SC", "Microsoft YaHei", SimSun, serif !important;
+}
+#practice .answer .explain-vi {
+  font-family: Arial, Helvetica, "Segoe UI", Tahoma, sans-serif !important;
+  color:#4338ca;
+}
+#practice .answer .explain-cn {
+  font-family: "Noto Serif SC", "Microsoft YaHei", SimSun, serif !important;
+}
+
+</style>
+
+<style id="practice-font-final-fix">
+/* FINAL FIX: dùng cùng font tiếng Việt với phần So sánh ý nghĩa */
+#practice,
+#practice *:not(.han):not(.cn):not(.word-a):not(.word-b):not(.obj) {
+  font-family: Quicksand, Arial, sans-serif !important;
+}
+#practice .q-title,
+#practice .quiz-note,
+#practice .quiz-note *,
+#practice .actions button,
+#practice .answer,
+#practice .answer *,
+#practice .score,
+#practice #score,
+#practice .opts label {
+  font-family: Quicksand, Arial, sans-serif !important;
+}
+#practice .han,
+#practice .cn {
+  font-family: 'Noto Serif SC','Microsoft YaHei',serif !important;
+}
+</style>
+
+<style id="nav-tab-vietnamese-font-fix">
+/* FIX RIÊNG NÚT TAB BÀI TẬP: dùng font Việt giống phần So sánh */
+.tabs .tab,
+.tabs button,
+nav.tabs .tab,
+nav.tabs button {
+  font-family: Quicksand, "Be Vietnam Pro", Arial, Helvetica, sans-serif !important;
+  font-weight: 900 !important;
+}
+</style>
+</head>
+<body>
+<header class="header"><div class="brand"><div class="logo">奇妙<br>汉语</div><div><h1>奇妙汉语</h1><div class="dots">● ● ●</div><p>Tiếng Trung Diệu Kỳ</p></div></div><div class="slogan"><div class="cn">❧ 奇妙汉语，学语言悟人生 ❧</div><div class="role">GIÁO VIÊN</div><div class="teacher">Nguyễn Hà Nhiên</div></div><div class="contacts"><a href="https://zalo.me/0973754714">Zalo: 0973754714</a><a href="https://www.facebook.com/profile.php?id=61591127255931">Theo dõi Facebook</a></div></header>
+<nav class="tabs"><button class="tab active" onclick="showTab('compare',this)">So sánh ý nghĩa 巴不得/恨不得</button><button class="tab" onclick="showTab('practice',this)">Bài tập</button></nav>
+<main class="wrap">
+<section id="compare" class="panel active">
+<div class="card"><h2 class="h2">📌 Điểm chung</h2><div class="common"><p class="han">“巴不得”和“恨不得”都是口语中常见的习惯用语，都表示<span class="obj">希望实现自己愿望</span>的意思。</p><p>“巴不得” và “恨不得” đều là quán dụng ngữ thường gặp trong khẩu ngữ, đều biểu thị <span class="obj">mong muốn thực hiện điều mình ao ước</span>.</p></div><div class="example-box"><b>✏️ Ví dụ minh họa</b><div class="common-examples-grid"><div class="ex"><div class="han"><span class="dialogue-line">A：需要我帮忙吗？ <span class="py-inline">A: Xūyào wǒ bāngmáng ma?</span></span><span class="dialogue-line">B：我<span class="obj">正</span><span class="word-a">巴不得</span>呢。 <span class="py-inline">B: Wǒ zhèng bābude ne.</span></span></div></div><div class="ex"><div class="han">还有一个月才放假，她<span class="obj"><span class="obj">真</span></span><span class="word-b">恨不得</span>今天就飞回家去。</div><div class="py">Hái yǒu yí ge yuè cái fàngjià, tā zhēn hènbude jīntiān jiù fēi huí jiā qù.</div></div></div></div></div>
+<div class="card"><h2 class="h2">📌 Điểm khác biệt</h2>
+<div class="diff-title">1. “巴不得”希望的事一般有可能实现 — “恨不得”希望的事往往不可能实现</div><div class="compare-grid"><div class="compare-card a-card"><h3><span class="word-a">巴不得</span> (bābude)</h3><p class="han">“巴不得”所希望的事一般是<span class="obj">有可能实现</span>的。</p><p class="vi">Việc mà “巴不得” mong muốn thường là việc <span class="obj">có khả năng thực hiện</span>.</p><div class="ex"><div class="han">甲：需要我帮忙吗？乙：我<span class="obj">正</span><span class="word-a">巴不得</span>呢。</div><div class="py">Tôi đang mong còn không được đây.</div></div></div><div class="compare-card b-card"><h3><span class="word-b">恨不得</span> (hènbude)</h3><p class="han">“恨不得”所希望的事往往是<span class="obj">不可能实现</span>的。</p><p class="vi">Việc mà “恨不得” mong muốn thường <span class="obj">khó hoặc không thể thực hiện ngay</span>, mang sắc thái <span class="obj">“ước gì có thể”</span>.</p><div class="ex"><div class="han">她<span class="obj"><span class="obj">真</span></span><span class="word-b">恨不得</span>今天就飞回家去。</div><div class="py">Cô ấy thật sự ước gì hôm nay bay về nhà ngay được.</div></div></div></div>
+<div class="diff-title">2. “巴不得”常与“<span class="obj">正、正是</span>”连用 — “恨不得”常与“<span class="obj">真</span>”连用</div><div class="compare-grid"><div class="compare-card a-card"><p class="han">“巴不得”前面常与<span class="obj">“<span class="obj">正、正是</span>”</span>连用。</p><p class="vi">Trước “巴不得” thường đi với <span class="obj">“<span class="obj">正、正是</span>”</span>.</p><div class="ex"><div class="han">能和你一起去旅行，<span class="obj">正是</span>我<span class="word-a">巴不得</span>的事。</div></div></div><div class="compare-card b-card"><p class="han">“恨不得”前面常与<span class="obj">“<span class="obj">真</span>”</span>连用。</p><p class="vi">Trước “恨不得” thường đi với <span class="obj">“<span class="obj">真</span>”</span>.</p><div class="ex"><div class="han">这个孩子<span class="obj">真</span>气人，我<span class="obj"><span class="obj">真</span></span><span class="word-b">恨不得</span>打他一顿。</div></div></div></div>
+<div class="diff-title">3. “巴不得”可以用于否定形式 — “恨不得”不能用于否定形式</div><div class="compare-grid"><div class="compare-card a-card"><p class="han">“巴不得”可以用在<span class="obj">否定形式</span>的句子里。</p><p class="vi">“巴不得” có thể dùng trong câu có <span class="obj">hình thức phủ định</span>.</p><div class="ex"><div class="han">我<span class="word-a">巴不得</span><span class="obj">不</span>去呢。</div><div class="py">Tôi mong là không phải đi ấy chứ.</div></div></div><div class="compare-card b-card"><p class="han">“恨不得”<span class="obj">不能用否定形式</span>。</p><p class="vi">“恨不得” không dùng theo hình thức phủ định như vậy.</p><div class="ex"><div class="han">不能说：我<span class="word-b">恨不得</span><span class="obj">不</span>去呢。</div></div></div></div>
+<div class="diff-title">4. “巴不得”可以组成“的”字结构 — “恨不得”不能这样说</div><div class="compare-grid"><div class="compare-card a-card"><p class="han">“巴不得”可以加<span class="obj">“的”字</span>，组成<span class="obj">“的”字结构</span>。</p><p class="vi">“巴不得” có thể thêm <span class="obj">“的”</span> tạo thành <span class="obj">kết cấu chữ “的”</span>.</p><div class="ex"><div class="han">能和你一起去旅行，正是我<span class="word-a">巴不得</span><span class="obj">的</span>事。</div></div></div><div class="compare-card b-card"><p class="han">“恨不得”<span class="obj">不能这样说</span>。</p><p class="vi">“恨不得” <span class="obj">không dùng được theo cách này</span>.</p><div class="ex"><div class="han">不能说：这是我<span class="word-b">恨不得</span><span class="obj">的</span>事。</div></div></div></div></div>
+<div class="card summary"><h2 class="h2">📊 Bảng tóm tắt</h2><table><tr><th>Cách dùng</th><th>巴不得</th><th>恨不得</th></tr><tr><td>Đều biểu thị <span class="obj">mong muốn mạnh mẽ</span></td><td>✓</td><td>✓</td></tr><tr><td>Việc mong muốn thường <span class="obj">có khả năng thực hiện</span></td><td>✓</td><td>△</td></tr><tr><td>Việc mong muốn thường <span class="obj">khó/không thể thực hiện ngay</span></td><td>△</td><td>✓</td></tr><tr><td>Thường đi với <span class="obj">正、正是</span></td><td>✓</td><td>×</td></tr><tr><td>Thường đi với <span class="obj">真</span></td><td>△</td><td>✓</td></tr><tr><td>Dùng được trong <span class="obj">câu phủ định</span></td><td>✓</td><td>×</td></tr><tr><td>Dùng được trong <span class="obj">kết cấu “的”</span></td><td>✓</td><td>×</td></tr></table></div>
+</section>
+<section id="practice" class="panel"><div class="card"><h2 class="h2">✏️ 请选择“巴不得”或“恨不得”填空</h2><div class="quiz-note"><b>注意：</b>请选择最合适的答案。<br><span class="vi">Lưu ý: Hãy chọn đáp án phù hợp nhất. Chỉ hiện đáp án sau khi nộp bài.</span></div><div class="quiz-grid" id="quiz"></div><div class="actions"><button class="submit" onclick="submitQuiz()">Nộp bài</button><button class="reset" onclick="resetQuiz()">Làm lại</button></div><div id="score" class="score"></div></div></section>
+</main>
+<script>
+function showTab(id,btn){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active')}
+const qs=[
+{t:'A: 我们的人够了，不用你参加比赛了，你不会生气吧？<br>B: 怎么会呢，我正____呢。',a:'巴不得',e:'前面有“正”，且表示“正希望这样”，事情可以实现，所以用“巴不得”。'},
+{t:'你当然____和妈妈一起住了，天天有人给你做饭。',a:'巴不得',e:'和妈妈一起住是可以实现的愿望，表示求之不得，用“巴不得”。'},
+{t:'这个孩子<span class="obj">真</span>气人，我<span class="obj">真</span>____打他一顿。',a:'恨不得',e:'前面有“<span class="obj">真</span>”，而且“打他一顿”带有强烈情绪，未必<span class="obj">真</span>会实现，用“恨不得”。'},
+{t:'他困极了，<span class="obj">真</span>____睡三天三夜。',a:'恨不得',e:'“睡三天三夜”比较夸张，往往不可能<span class="obj">真</span>的实现，用“恨不得”。'},
+{t:'老师说今天不用考试，同学们____立刻欢呼起来。',a:'巴不得',e:'不用考试是学生希望并可能实现的事，可用“巴不得”。'},
+{t:'还有一个月才放假，她<span class="obj">真</span>____今天就飞回家去。',a:'恨不得',e:'假期还没到，今天飞回家不现实，所以用“恨不得”。'},
+{t:'我____不去参加那个无聊的会议。',a:'巴不得',e:'“巴不得”可以用于否定形式，如“巴不得不去”。“恨不得”不能这样用。'},
+{t:'能和你一起去旅行，正是我____的事。',a:'巴不得',e:'“巴不得”可以构成“巴不得的事”，“恨不得”<span class="obj">不能这样说</span>。'},
+{t:'天气太热了，我<span class="obj">真</span>____马上跳进游泳池。',a:'恨不得',e:'表示强烈、夸张的即时愿望，常与“<span class="obj">真</span>”连用，用“恨不得”。'},
+{t:'你要是愿意帮我搬家，那我____呢！',a:'巴不得',e:'表示非常希望对方帮忙，是可以实现的愿望，用“巴不得”。'}];
+function render(){document.getElementById('quiz').innerHTML=qs.map((q,i)=>`<div class="q" data-a="${q.a}"><div class="q-title">${i+1}. ${q.t}</div><div class="opts"><label><input type="radio" name="q${i}" value="巴不得"> 巴不得</label><label><input type="radio" name="q${i}" value="恨不得"> 恨不得</label></div><div class="answer" id="ans${i}"></div></div>`).join('')}
+function submitQuiz(){let s=0;qs.forEach((q,i)=>{let chosen=document.querySelector(`input[name=q${i}]:checked`);let box=document.getElementById('ans'+i);let ok=chosen&&chosen.value===q.a;if(ok)s++;box.className='answer show '+(ok?'correct':'wrong');box.innerHTML=(ok?'<span class="vi">✅ Đúng.</span>':'<span class="vi">❌ Chưa đúng.</span>')+` <b class="vi">Đáp án: ${q.a}</b><br><span class="vi">Giải thích: </span><span class="explain-cn">${q.e}</span>`});document.getElementById('score').innerHTML=`<span class="vi">Kết quả: ${s}/${qs.length} câu đúng.</span>`}
+function resetQuiz(){render();document.getElementById('score').textContent=''}render();
+</script>
+</body></html>
