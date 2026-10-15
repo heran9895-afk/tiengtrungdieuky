@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chém chữ Hán</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&family=Quicksand:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ===== TOKEN CHUNG — 奇妙汉语 ===== */
+:root{
+  --brand:#0b5a2a; --brand-soft:#eaf8ef; --gold:#e2ad28; --red:#b31916;
+  --ink:#3a3a3a; --muted:#7c7264; --line:#d8c28a; --line-soft:rgba(11,90,42,.18);
+  --surface:#fff; --surface-2:#faf7f0;
+  --r-card:18px; --r-box:12px; --r-pill:999px;
+  --shadow:0 10px 28px rgba(0,0,0,.08); --shadow-hover:0 14px 36px rgba(11,90,42,.13);
+  --font-ui:'Quicksand',system-ui,Arial,sans-serif; --font-cn:'Noto Serif SC',serif;
+  --fs-word:38px; --fs-cn:17px; --fs-py:16px; --fs-text:15px; --fs-label:11px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:transparent;color:var(--ink);font-family:var(--font-ui);font-weight:600}
+.hanzi{font-family:var(--font-cn);font-weight:700}
+button{font-family:inherit}
+.btn{border:2px solid var(--brand);background:#fff;color:var(--brand);border-radius:var(--r-pill);
+     padding:10px 16px;font-weight:800;cursor:pointer;transition:.15s}
+.btn:hover,.btn.active{background:var(--brand);color:#fff;transform:translateY(-1px)}
+.btn:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.card{background:var(--surface);border:1px solid var(--line-soft);border-radius:var(--r-card);box-shadow:var(--shadow)}
+
+/* ===== GAME CHÉM ĐẠI TỪ ===== */
+.wrap{max-width:720px;margin:0 auto;padding:12px 12px 24px}
+.game{padding:12px;user-select:none;-webkit-user-select:none}
+.hud{display:flex;align-items:center;gap:14px;margin-bottom:10px;font-size:15px}
+.lives{letter-spacing:2px;font-size:20px;color:var(--red)}
+.lives .lost{color:#dcd3c3}
+.time{margin-left:auto;color:var(--muted)}
+.time.low{color:var(--red)}
+.score{font-weight:800;color:var(--brand);min-width:62px;text-align:right}
+.mute{border:2px solid var(--line-soft);background:#fff;border-radius:var(--r-pill);width:38px;height:34px;font-size:16px;cursor:pointer;padding:0}
+.mute:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.prompt{position:relative}
+.prompt{background:var(--brand-soft);border:1px solid var(--line-soft);border-radius:var(--r-box);padding:12px 10px;text-align:center}
+.prompt .vi{font-size:34px;font-weight:800;color:var(--brand);line-height:1.2}
+.prompt .note{font-size:14px;color:var(--muted);margin-top:2px}
+.prompt.pop .vi{animation:pop .28s ease-out}
+@keyframes pop{from{transform:scale(.96);opacity:.4}to{transform:none;opacity:1}}
+.ask{font-size:13px;color:var(--muted);margin:6px 2px 8px}
+.field{position:relative;height:clamp(340px,52vh,500px);border-radius:var(--r-box);overflow:hidden;
+       background:linear-gradient(#fdfbf6,#f5efe2);border:1px solid var(--line-soft)}
+canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:crosshair}
+.toast{position:absolute;left:50%;top:14px;transform:translateX(-50%);background:#fff;border:2px solid var(--red);
+       color:var(--red);border-radius:var(--r-box);padding:6px 14px;font-size:14px;width:max-content;max-width:92%;text-align:center;line-height:1.45;
+       opacity:0;transition:opacity .2s;pointer-events:none}
+.toast.show{opacity:1}
+.toast .hanzi{font-size:17px}
+.layer{position:absolute;inset:0;display:flex;align-items:flex-start;justify-content:center;padding:16px;
+       background:rgba(250,247,240,.94);overflow:auto}
+.layer[hidden]{display:none}
+.panel{max-width:420px;width:100%;text-align:center;margin:auto}   /* margin:auto giữ giữa mà nội dung dài vẫn cuộn được từ đầu */
+.panel h2{margin:0 0 4px;font-size:24px;color:var(--brand)}
+.panel p{margin:6px 0;font-size:14px;line-height:1.55}
+.rules{text-align:left;margin:8px 0;padding:0;list-style:none;font-size:14px;line-height:1.5}
+.rules li{display:flex;gap:10px;align-items:center;padding:3px 0}
+.rules svg{flex:none}
+.big{font-size:48px;font-weight:800;color:var(--brand);line-height:1}
+.stats{display:flex;justify-content:center;gap:16px;font-size:13px;color:var(--muted);margin:8px 0 12px}
+.stats b{display:block;font-size:20px;color:var(--ink)}
+.miss{text-align:left;list-style:none;padding:0;margin:0 0 14px;font-size:13px;line-height:1.5}
+.miss li{padding:8px 0;border-top:1px solid var(--line-soft)}
+.miss .hanzi{color:var(--red);font-size:17px}
+.best{font-size:13px;color:var(--muted)}
+.who{display:flex;gap:8px;margin:10px 0 6px}
+.who input{flex:1;min-width:0;border:2px solid var(--line-soft);border-radius:var(--r-box);padding:10px 12px;font:inherit;font-size:15px;color:var(--ink);background:#fff}
+.who input:focus{outline:none;border-color:var(--brand)}
+.who input.need{border-color:var(--red)}
+.who #lop{flex:0 0 96px}
+.warn{color:var(--red);font-size:13px;min-height:18px;margin:0 0 6px}
+.send{font-size:13px;margin:4px 0 12px;color:var(--muted)}
+.send.ok{color:var(--brand)} .send.bad{color:var(--red)}
+.send button{margin-left:6px;padding:4px 12px;font-size:13px}
+@media (prefers-reduced-motion:reduce){.prompt.pop .vi{animation:none}*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="game card">
+    <div class="hud">
+      <span class="lives" id="lives"></span>
+      <span class="time" id="time">60 giây</span>
+      <span class="score" id="score">0 điểm</span>
+      <button class="mute" id="mute" aria-label="Bật hoặc tắt âm thanh"></button>
+    </div>
+    <div class="prompt" id="prompt"></div>
+    <p class="ask">Chém quả có chữ Hán đúng nghĩa.</p>
+    <div class="field" id="field">
+      <canvas id="cv"></canvas>
+      <div class="toast" id="toast"></div>
+      <div class="layer" id="startLayer"></div>
+      <div class="layer" id="endLayer" hidden></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===== DỮ LIỆU: 10 ĐẠI TỪ + TỪ VỰNG BÀI HỌC ===== */
+const P = {
+  '我':  {py:'wǒ',    why:'我 là chính người đang nói.'},
+  '您':  {py:'nín',   why:'您 là cách gọi lịch sự của 你, dùng với người lớn tuổi, thầy cô, khách hàng. Chữ 你 có thêm bộ 心 bên dưới.'},
+  '你':  {py:'nǐ',    why:'你 là một người đang nói chuyện trực tiếp với người nói. Nam hay nữ đều dùng 你.'},
+  '他':  {py:'tā',    why:'他 là một người nam không tham gia cuộc nói chuyện. Bộ 亻 bên trái chỉ "người".'},
+  '她':  {py:'tā',    why:'她 là một người nữ không tham gia cuộc nói chuyện. Bộ 女 bên trái chỉ "nữ".'},
+  '它':  {py:'tā',    why:'它 dùng cho con vật hoặc đồ vật, nên không có bộ 亻 hay bộ 女.'},
+  '我们':{py:'wǒmen', why:'我们 là người nói cùng những người trong nhóm của mình. Thêm 们 là thành số nhiều.'},
+  '你们':{py:'nǐmen', why:'你们 là hai người trở lên đang nói chuyện trực tiếp với người nói.'},
+  '他们':{py:'tāmen', why:'他们 dùng cho nhóm toàn nam, và cả nhóm có cả nam lẫn nữ.'},
+  '她们':{py:'tāmen', why:'她们 chỉ dùng cho nhóm toàn nữ.'},
+  '它们':{py:'tāmen', why:'它们 dùng cho nhiều con vật hoặc nhiều đồ vật.'},
+  '好':   {py:'hǎo',      why:'好 gồm 女 và 子. Đừng nhầm với 她, chữ này cũng có bộ 女.'},
+  '不':   {py:'bù',       why:'不 nghĩa là "không", đứng trước động từ hoặc tính từ để phủ định.'},
+  '对不起':{py:'duìbuqǐ', why:'对不起 dùng để xin lỗi. Người kia thường đáp lại bằng 没关系.'},
+  '没关系':{py:'méi guānxi', why:'没关系 dùng để đáp lại khi người khác xin lỗi (对不起).'},
+  '谢谢': {py:'xièxie',   why:'谢谢 dùng để cảm ơn. Người kia thường đáp lại bằng 不客气.'},
+  '不客气':{py:'bú kèqi', why:'不客气 là 不 + 客气, dùng để đáp lại 谢谢. 不 đứng trước thanh 4 nên đọc thành bú.'},
+  '客气': {py:'kèqi',     why:'客气 là khách sáo. Thêm 不 phía trước thành 不客气 (không có gì).'},
+  '再见': {py:'zàijiàn',  why:'再见 là 再 (lại) + 见 (gặp), nghĩa là tạm biệt, hẹn gặp lại.'},
+  '见':   {py:'jiàn',     why:'见 là gặp, thấy. Thêm 再 phía trước thành 再见 (tạm biệt).'}
+};
+const CONF = {
+  '我':['你','我们','他'],     '你':['您','我','你们'],     '您':['你','你们','我'],
+  '他':['她','它','他们'],     '她':['他','它','她们'],     '它':['他','她','它们'],
+  '我们':['我','你们','他们'], '你们':['你','我们','他们'],
+  '他们':['她们','他','你们'], '她们':['他们','她','它们'], '它们':['它','他们','她们'],
+  '好':['她','不','见'],             '不':['不客气','好','没关系'],
+  '对不起':['没关系','谢谢','不客气'], '没关系':['对不起','不客气','不'],
+  '谢谢':['不客气','对不起','再见'],   '不客气':['客气','谢谢','没关系'],
+  '客气':['不客气','谢谢','见'],       '再见':['见','谢谢','对不起'],
+  '见':['再见','客气','好']
+};
+const KEYS = Object.keys(P);
+
+/* ===== NGHĨA TIẾNG VIỆT LÀM ĐỀ ===== */
+/* Có ghi chú khi một nghĩa tiếng Việt ứng với nhiều chữ (ví dụ "họ") */
+const MEAN = {
+  '我':  {vi:'tôi',        note:''},
+  '您':  {vi:'ngài, ông, bà', note:'cách gọi lịch sự của 你'},
+  '你':  {vi:'bạn',        note:'một người đang nói chuyện với mình'},
+  '他':  {vi:'anh ấy',     note:'một người nam'},
+  '她':  {vi:'cô ấy',      note:'một người nữ'},
+  '它':  {vi:'nó',         note:'con vật, đồ vật'},
+  '我们':{vi:'chúng tôi, chúng ta', note:''},
+  '你们':{vi:'các bạn',    note:'nhiều người đang nói chuyện với mình'},
+  '他们':{vi:'họ',         note:'nhóm nam, hoặc có cả nam lẫn nữ'},
+  '她们':{vi:'các cô ấy',  note:'nhóm toàn nữ'},
+  '它们':{vi:'chúng nó',   note:'nhiều con vật, đồ vật'},
+  '好':   {vi:'tốt, khỏe',  note:''},
+  '不':   {vi:'không',      note:''},
+  '对不起':{vi:'xin lỗi',    note:''},
+  '没关系':{vi:'không sao',  note:'đáp lại lời xin lỗi'},
+  '谢谢': {vi:'cảm ơn',     note:''},
+  '不客气':{vi:'không có gì', note:'đáp lại lời cảm ơn'},
+  '客气': {vi:'khách sáo',  note:''},
+  '再见': {vi:'tạm biệt',   note:'hẹn gặp lại'},
+  '见':   {vi:'gặp, thấy',  note:''}
+};
+
+/* ===== GỬI ĐIỂM LÊN BẢNG XẾP HẠNG (Apps Script 奇妙汉语, lệnh submit) ===== */
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxvHN55cw3hIJFVU7cflv07WtsnSWgF8tm-kc3esYxST-uVcyrCRc4_yP8doZ_jUQG3/exec';
+const LESSON = 'game-chem-chu-han';                  // bảng xếp hạng đọc đúng mã này
+const WHO_KEY = 'qmhy:hoc-sinh';                     // nhớ tên và lớp, chơi lại khỏi gõ
+
+/* ===== CÀI ĐẶT GAME ===== */
+const ROUND_TIME = 60, LIVES = 3;
+const BEST_KEY = 'qmhy:chem-dai-tu:best';
+const FRUITS = [                                      // vỏ và ruột của từng loại quả
+  {rim:'#f08a24', hi:'#ffb45e', flesh:'#ffd59a'},
+  {rim:'#7cb342', hi:'#a6d46a', flesh:'#e8f5c8'},
+  {rim:'#8e44ad', hi:'#b277cc', flesh:'#f0d9f7'},
+  {rim:'#f4c430', hi:'#ffe07a', flesh:'#fff3c4'},
+  {rim:'#d9433a', hi:'#f07a6f', flesh:'#ffe0d6'}
+];
+
+const $ = id => document.getElementById(id);
+const cv = $('cv'), ctx = cv.getContext('2d'), field = $('field');
+let W = 0, H = 0, R = 36, dpr = 1;
+let state = 'idle', paused = false;
+let fruits = [], halves = [], parts = [], floats = [], trail = [];
+let cur = null, pid = 0, score = 0, lives = LIVES, timeLeft = ROUND_TIME, combo = 0;
+let maxCombo = 0, log = [], playerName = '', playerClass = '', attemptId = '';
+let hits = 0, wrongs = 0, misses = 0, mistakes = [], nextWave = 0, lastT = 0, toastT = 0;
+
+const rand = (a,b) => a + Math.random()*(b-a);
+const shuffle = a => { a = a.slice(); for (let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; };
+const readBest = () => { try { return +localStorage.getItem(BEST_KEY) || 0; } catch(e){ return 0; } };
+const saveBest = v => { try { localStorage.setItem(BEST_KEY, v); } catch(e){} };
+
+function resize(){
+  dpr = Math.min(window.devicePixelRatio || 1, 2);
+  W = field.clientWidth; H = field.clientHeight;
+  cv.width = W*dpr; cv.height = H*dpr;
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  R = Math.max(30, Math.min(44, W*0.085));
+}
+new ResizeObserver(resize).observe(field);
+
+/* ===== ÂM THANH: tự tổng hợp bằng Web Audio, không cần file mp3 ===== */
+const MUTE_KEY = 'qmhy:chem-dai-tu:mute';
+let AC = null, master = null, muted = (() => { try { return localStorage.getItem(MUTE_KEY) === '1'; } catch(e){ return false; } })();
+function ac(){                                        // chỉ tạo sau lần bấm đầu tiên, điện thoại mới cho phát
+  if (!AC){
+    const C = window.AudioContext || window.webkitAudioContext; if (!C) return null;
+    AC = new C(); master = AC.createGain(); master.gain.value = muted ? 0 : 0.6; master.connect(AC.destination);
+  }
+  if (AC.state === 'suspended') AC.resume();
+  return AC;
+}
+function tone(f, dur, type='sine', vol=.3, f2=null, delay=0){
+  const a = ac(); if (!a || muted) return;
+  const t = a.currentTime + delay, o = a.createOscillator(), g = a.createGain();
+  o.type = type; o.frequency.setValueAtTime(f, t);
+  if (f2) o.frequency.exponentialRampToValueAtTime(f2, t + dur);
+  g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+  o.connect(g); g.connect(master); o.start(t); o.stop(t + dur + 0.02);
+}
+function noise(dur, vol=.3, f1=800, f2=3000, delay=0){
+  const a = ac(); if (!a || muted) return;
+  const t = a.currentTime + delay, n = Math.floor(a.sampleRate*dur), buf = a.createBuffer(1, n, a.sampleRate), d = buf.getChannelData(0);
+  for (let i=0;i<n;i++) d[i] = Math.random()*2-1;
+  const src = a.createBufferSource(), bp = a.createBiquadFilter(), g = a.createGain();
+  src.buffer = buf; bp.type = 'bandpass'; bp.Q.value = 1.2;
+  bp.frequency.setValueAtTime(f1, t); bp.frequency.exponentialRampToValueAtTime(f2, t + dur);
+  g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+  src.connect(bp); bp.connect(g); g.connect(master); src.start(t);
+}
+const sfx = {
+  whoosh(){ noise(.18, .25, 600, 4000); },                                   // vung dao
+  splat(){ noise(.12, .35, 1800, 400); tone(180, .1, 'triangle', .25, 90); }, // quả vỡ
+  correct(c){ const k = Math.pow(2, Math.min(c-1, 8)/12);                     // chém đúng liên tiếp thì nốt cao dần
+    tone(660*k, .12, 'triangle', .3); tone(990*k, .22, 'triangle', .25, null, .08); },
+  wrong(){ tone(150, .35, 'sawtooth', .22, 80); tone(156, .35, 'square', .1, 82); },
+  miss(){ tone(130, .3, 'sine', .45, 45); noise(.15, .15, 300, 120); },
+  tick(hi){ tone(hi ? 1320 : 990, .05, 'square', .12); },
+  beat(fast){ tone(70, .14, 'sine', fast ? .55 : .4, 40); tone(62, .12, 'sine', fast ? .45 : .3, 38, .17); },  // nhịp tim nền
+  start(){ [523,659,784].forEach((f,i) => tone(f, .14, 'triangle', .28, null, i*.1)); },
+  end(best){ (best ? [523,659,784,1047] : [523,440,349,262]).forEach((f,i) => tone(f, .22, 'triangle', .3, null, i*.15)); }
+};
+function setMute(m){
+  muted = m; try { localStorage.setItem(MUTE_KEY, m ? '1' : '0'); } catch(e){}
+  if (master) master.gain.value = m ? 0 : 0.6;
+  $('mute').textContent = m ? '🔇' : '🔊';
+}
+
+/* ===== ĐỀ BÀI ===== */
+const promptHTML = k => `<div class="vi">${MEAN[k].vi}</div><div class="note">${MEAN[k].note || '&nbsp;'}</div>`;
+/* Rút đề như rút bài: đi hết cả bộ từ mới xáo lại bộ mới, và không để chữ cuối bộ cũ trùng chữ đầu bộ mới */
+let bag = [];
+function newPrompt(){
+  if (!bag.length){
+    bag = shuffle(KEYS);
+    if (cur && bag[bag.length-1] === cur.k) [bag[0], bag[bag.length-1]] = [bag[bag.length-1], bag[0]];
+  }
+  const k = bag.pop();
+  cur = {k};
+  pid++;
+  const p = $('prompt');
+  p.innerHTML = promptHTML(k);
+  p.classList.remove('pop'); void p.offsetWidth; p.classList.add('pop');
+  fruits.forEach(f => f.alive = false);               // quả của đề cũ tan đi, không tính điểm
+}
+
+/* ===== TUNG QUẢ ===== */
+const level = () => Math.floor(hits/4);
+const gravity = () => H * Math.min(1.5, 0.9 + 0.06*level());   // càng nhỏ quả càng bay chậm
+
+function spawnWave(){
+  const n = level() >= 3 ? 4 : 3;
+  const keys = shuffle([cur.k, ...shuffle(CONF[cur.k]).slice(0, n-1)]);
+  const g = gravity();
+  keys.forEach((k,i) => {
+    const x = W*(0.14 + 0.72*(i+0.5)/n) + rand(-12,12);
+    const h = H*rand(0.52, 0.8);
+    fruits.push({
+      k, pid, x, y:H+R, r: R*(k.length===3 ? 1.22 : 1), vx:(W/2-x)*rand(0.1,0.35), vy:-Math.sqrt(2*g*h),
+      wait:i*rand(0.12,0.3), alive:true, fade:0, wob:rand(0,6),
+      look:FRUITS[Math.floor(Math.random()*FRUITS.length)]
+    });
+  });
+}
+
+/* ===== CHÉM ===== */
+function segDist(px,py,ax,ay,bx,by){
+  const dx=bx-ax, dy=by-ay, L=dx*dx+dy*dy;
+  let t = L ? ((px-ax)*dx+(py-ay)*dy)/L : 0; t = Math.max(0, Math.min(1, t));
+  return Math.hypot(px-(ax+t*dx), py-(ay+t*dy));
+}
+
+function slice(f, ang){
+  f.dead = true;
+  const ok = f.alive && f.k === cur.k && f.pid === pid;
+  const nx = -Math.sin(ang), ny = Math.cos(ang);
+  [-1,1].forEach(side => halves.push({x:f.x, y:f.y, vx:f.vx+nx*side*90, vy:Math.min(f.vy,0)*0.3+ny*side*90,
+    ang, rot:0, vr:side*rand(2,4), side, look:f.look, k:f.k, r:f.r, grey:!ok}));
+  for (let i=0;i<12;i++) parts.push({x:f.x, y:f.y, vx:rand(-220,220), vy:rand(-260,80), life:rand(.35,.6), t:0,
+    col: ok ? f.look.flesh : '#cfc6b6', r:rand(2,5)});
+  sfx.splat();
+  if (!f.alive) return;                               // quả đang tan: chỉ hiệu ứng
+  if (ok){
+    combo++; hits++; maxCombo = Math.max(maxCombo, combo);
+    logIt(cur.k, f.k, true);
+    const gain = 10 + Math.min(combo-1, 4)*5;
+    score += gain;
+    floats.push({x:f.x, y:f.y-R, text:'+'+gain, col:'#0b5a2a', t:0});
+    sfx.correct(combo);
+    newPrompt();
+  } else {
+    combo = 0; wrongs++; lives--;
+    logIt(cur.k, f.k, false);
+    mistakes.push({k:cur.k, pick:f.k});
+    floats.push({x:f.x, y:f.y-R, text:'Sai', col:'#b31916', t:0});
+    sfx.wrong();
+    toast(`“${MEAN[cur.k].vi}” là <span class="hanzi">${cur.k}</span> (${P[cur.k].py}), không phải <span class="hanzi">${f.k}</span>`);
+  }
+  hud();
+}
+
+function logIt(k, pick, ok){                          // chi tiết từng đề, gửi kèm để cô xem câu hay sai
+  log.push({index:log.length+1, type:'chem', typeName:'Chém chữ Hán',
+    question: MEAN[k].vi + (MEAN[k].note ? ' (' + MEAN[k].note + ')' : ''),
+    userAnswer: pick, correctAnswer: k, correct: ok});
+}
+
+function missed(){
+  combo = 0; misses++; lives--; sfx.miss();
+  logIt(cur.k, '', false);
+  mistakes.push({k:cur.k, pick:null});
+  toast(`Để rơi mất <span class="hanzi">${cur.k}</span> (${P[cur.k].py})`);
+  newPrompt(); hud();
+}
+
+let down = false, lx = 0, ly = 0;
+function pt(e){ const r = cv.getBoundingClientRect(); return [e.clientX-r.left, e.clientY-r.top]; }
+let swung = false, sx0 = 0, sy0 = 0;
+cv.addEventListener('pointerdown', e => { down = true; swung = false; [sx0,sy0] = pt(e); [lx,ly] = pt(e); trail = [{x:lx,y:ly,t:performance.now()}]; cv.setPointerCapture(e.pointerId); });
+cv.addEventListener('pointermove', e => {
+  if (!down || state !== 'play' || paused) return;
+  const [x,y] = pt(e), now = performance.now();
+  trail.push({x,y,t:now});
+  if (!swung && Math.hypot(x-sx0, y-sy0) > 40){ swung = true; sfx.whoosh(); }
+  if (Math.hypot(x-lx, y-ly) > 4){                    // chạm nhẹ không tính, phải vuốt mới chém
+    const ang = Math.atan2(y-ly, x-lx);
+    // cùng một nhát trúng cả quả đúng lẫn quả sai thì xét quả đúng trước, quả sai lúc đó đã tan nên không bị trừ mạng
+    fruits.filter(f => !f.dead && f.wait<=0 && segDist(f.x,f.y,lx,ly,x,y) < f.r)
+          .sort((a,b) => (b.k===cur.k) - (a.k===cur.k))
+          .forEach(f => slice(f, ang));
+  }
+  lx = x; ly = y;
+});
+['pointerup','pointercancel','pointerleave'].forEach(n => cv.addEventListener(n, () => down = false));
+
+/* ===== VÒNG LẶP ===== */
+function step(t){
+  const dt = Math.min(0.033, (t - lastT)/1000 || 0); lastT = t;
+  if (state === 'play' && !paused) update(dt);
+  draw(t);
+  requestAnimationFrame(step);
+}
+
+let lastSec = ROUND_TIME, beatT = 0;
+function update(dt){
+  timeLeft -= dt;
+  const sec = Math.ceil(timeLeft);
+  if (sec !== lastSec){ lastSec = sec; if (sec <= 10 && sec > 0) sfx.tick(sec <= 3); }
+  if ((beatT -= dt) <= 0){ const fast = timeLeft <= 10 || lives === 1; sfx.beat(fast); beatT = fast ? 0.5 : 0.85; }
+  const g = gravity();
+  fruits.forEach(f => {
+    if (f.wait > 0){ f.wait -= dt; return; }
+    f.x += f.vx*dt; f.y += f.vy*dt; f.vy += g*dt;
+    if (!f.alive) f.fade += dt;
+    if (f.alive && f.vy > 0 && f.y > H + R*1.2){
+      f.dead = true;
+      if (f.k === cur.k && f.pid === pid) missed();
+    }
+  });
+  fruits = fruits.filter(f => !f.dead && f.fade < 0.3);
+  halves.forEach(h => { h.x += h.vx*dt; h.y += h.vy*dt; h.vy += g*dt; h.rot += h.vr*dt; });
+  halves = halves.filter(h => h.y < H + R*2);
+  parts.forEach(p => { p.t += dt; p.x += p.vx*dt; p.y += p.vy*dt; p.vy += 600*dt; });
+  parts = parts.filter(p => p.t < p.life);
+  floats.forEach(f => { f.t += dt; f.y -= 40*dt; });
+  floats = floats.filter(f => f.t < 0.8);
+  if (!fruits.length){
+    nextWave -= dt;
+    if (nextWave <= 0){ spawnWave(); nextWave = 0.45; }
+  }
+  if (toastT > 0 && (toastT -= dt) <= 0) $('toast').classList.remove('show');
+  if (lives <= 0 || timeLeft <= 0){ timeLeft = Math.max(0, timeLeft); end(); }
+  hud();
+}
+
+function drawFruit(f){
+  const r = f.r;
+  ctx.beginPath(); ctx.arc(0,0,r,0,Math.PI*2);
+  const gr = ctx.createRadialGradient(-r*.35,-r*.4,r*.1,0,0,r);
+  gr.addColorStop(0,f.look.hi); gr.addColorStop(1,f.look.rim);
+  ctx.fillStyle = gr; ctx.fill();
+  ctx.save(); ctx.translate(r*.35,-r*.9); ctx.rotate(-.6);
+  ctx.beginPath(); ctx.ellipse(0,0,r*.28,r*.12,0,0,Math.PI*2); ctx.fillStyle = '#3f8f3a'; ctx.fill(); ctx.restore();
+  ctx.beginPath(); ctx.arc(0,0,r*.72,0,Math.PI*2);
+  ctx.fillStyle = '#fffaf0'; ctx.fill();
+  ctx.lineWidth = 1.5; ctx.strokeStyle = 'rgba(0,0,0,.08)'; ctx.stroke();
+  const fs = r * [0, .8, .52, .37][f.k.length];          // 1, 2 hay 3 chữ đều nằm gọn trong lòng quả
+  ctx.font = `700 ${fs}px "Noto Serif SC", serif`;
+  ctx.fillStyle = '#b31916'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  ctx.fillText(f.k, 0, r*.04);
+}
+
+function draw(t){
+  ctx.clearRect(0,0,W,H);
+  fruits.forEach(f => {
+    if (f.wait > 0) return;
+    ctx.save(); ctx.globalAlpha = f.alive ? 1 : Math.max(0, 1 - f.fade/0.3);
+    ctx.translate(f.x, f.y); ctx.rotate(Math.sin(t/400 + f.wob)*0.08);
+    drawFruit(f); ctx.restore();
+  });
+  halves.forEach(h => {
+    ctx.save(); ctx.translate(h.x, h.y); ctx.rotate(h.rot);
+    ctx.rotate(h.ang); ctx.beginPath(); ctx.rect(-h.r*1.3, h.side<0 ? -h.r*1.3 : 0, h.r*2.6, h.r*1.3); ctx.clip();
+    ctx.fillStyle = h.look.flesh; ctx.fillRect(-h.r, h.side<0 ? -3 : 0, h.r*2, 3);
+    ctx.rotate(-h.ang);
+    if (h.grey) ctx.filter = 'grayscale(1)';
+    drawFruit(h); ctx.restore();
+  });
+  parts.forEach(p => { ctx.globalAlpha = 1 - p.t/p.life; ctx.fillStyle = p.col;
+    ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill(); });
+  ctx.globalAlpha = 1;
+  floats.forEach(f => { ctx.globalAlpha = 1 - f.t/0.8; ctx.fillStyle = f.col;
+    ctx.font = '800 22px Quicksand, sans-serif'; ctx.textAlign = 'center'; ctx.fillText(f.text, f.x, f.y); });
+  ctx.globalAlpha = 1;
+  const now = performance.now();                       // vệt dao
+  trail = trail.filter(p => now - p.t < 140);
+  for (let i=1;i<trail.length;i++){
+    const a = trail[i-1], b = trail[i], k = 1 - (now-b.t)/140;
+    ctx.strokeStyle = `rgba(226,173,40,${k})`; ctx.lineWidth = 2 + 6*k; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+  }
+}
+
+/* ===== GIAO DIỆN ===== */
+function hud(){
+  $('lives').innerHTML = Array.from({length:LIVES}, (_,i) => `<span class="${i<lives?'':'lost'}">♥</span>`).join('');
+  const s = Math.ceil(timeLeft); $('time').textContent = s + ' giây';
+  $('time').classList.toggle('low', s <= 10);
+  $('score').textContent = score + ' điểm';
+}
+
+function toast(html){ const el = $('toast'); el.innerHTML = html; el.classList.add('show'); toastT = 1.6; }
+
+function start(){
+  const t = $('ten'), l = $('lop');
+  if (t){                                             // lần đầu: lấy tên và lớp từ màn bắt đầu
+    playerName = t.value.trim().replace(/\s+/g,' '); playerClass = l.value.trim();
+    t.classList.toggle('need', !playerName); l.classList.toggle('need', !playerClass);
+    if (!playerName || !playerClass){ $('warn').textContent = 'Em nhập họ tên và lớp để lên bảng xếp hạng nhé.'; return; }
+    try { localStorage.setItem(WHO_KEY, JSON.stringify({ten:playerName, lop:playerClass})); } catch(e){}
+  }
+  log = []; maxCombo = 0; attemptId = Date.now() + '_' + Math.random().toString(36).slice(2,8);
+  fruits = []; halves = []; parts = []; floats = []; mistakes = [];
+  score = 0; lives = LIVES; timeLeft = ROUND_TIME; combo = 0; hits = wrongs = misses = 0;
+  cur = null; bag = []; newPrompt(); nextWave = 0.5;
+  $('startLayer').hidden = true; $('endLayer').hidden = true;
+  $('toast').classList.remove('show');
+  lastSec = ROUND_TIME; beatT = 0.6;
+  ac(); sfx.start();
+  state = 'play'; hud();
+}
+
+function end(){
+  state = 'over'; $('toast').classList.remove('show');
+  const best = Math.max(readBest(), score), isNew = score > 0 && score >= best && score > readBest();
+  saveBest(best);
+  sfx.end(isNew);
+  const seen = new Set(), list = mistakes.filter(m => { const id = m.k; if (seen.has(id)) return false; seen.add(id); return true; });
+  $('endLayer').innerHTML = `<div class="panel">
+    <p>${lives <= 0 ? 'Hết mạng' : 'Hết giờ'}</p>
+    <div class="big">${score}</div><p>điểm · ${playerName}, lớp ${playerClass}</p>
+    <p class="send" id="sendSt"></p>
+    <div class="stats"><span><b>${hits}</b>chém đúng</span><span><b>${wrongs}</b>chém nhầm</span><span><b>${misses}</b>để rơi</span></div>
+    <p class="best">${isNew ? 'Kỷ lục mới trên máy này!' : 'Kỷ lục trên máy này: ' + best + ' điểm'}</p>
+    ${list.length ? `<ul class="miss">${list.map(m => `<li>“${MEAN[m.k].vi}” là <span class="hanzi">${m.k}</span> (${P[m.k].py})${m.pick ? `, em chém <span class="hanzi">${m.pick}</span>` : ', em để rơi'}. ${P[m.k].why}</li>`).join('')}</ul>` : ''}
+    <button class="btn" id="againBtn">Chơi lại</button></div>`;
+  $('endLayer').hidden = false;
+  $('againBtn').onclick = start;
+  submit();
+}
+
+function submit(){
+  const st = $('sendSt');
+  st.className = 'send'; st.textContent = 'Đang gửi điểm lên bảng xếp hạng…';
+  const body = {
+    action:'submit', lesson:LESSON, phanLoai:'game', bai:'',
+    hoTenHocSinh:playerName, lop:playerClass, attemptId,
+    score, total:0, bestStreak:maxCombo,
+    durationSeconds: Math.round(ROUND_TIME - timeLeft),
+    mode:'chem-chu-han', poolTotal:KEYS.length, timeout: lives > 0,
+    chiTiet: log
+  };
+  fetch(SHEET_URL, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:JSON.stringify(body)})
+    .then(r => r.json())
+    .then(d => {
+      if (!d.ok) throw new Error(d.error || 'lỗi');
+      st.className = 'send ok'; st.textContent = 'Đã lên bảng xếp hạng.';
+    })
+    .catch(err => {
+      st.className = 'send bad';
+      st.innerHTML = 'Chưa gửi được điểm. <button class="btn" id="resendBtn">Gửi lại</button>';
+      $('resendBtn').onclick = submit;
+    });
+}
+
+$('startLayer').innerHTML = `<div class="panel">
+  <h2>Chém chữ Hán</h2>
+  <ul class="rules">
+    <li><svg width="40" height="40" viewBox="0 0 40 40"><rect x="3" y="8" width="34" height="24" rx="8" fill="#eaf8ef" stroke="#0b5a2a" stroke-width="2"/><text x="20" y="25" text-anchor="middle" font-size="12" font-weight="700" fill="#0b5a2a">Aa</text></svg><span>Đề là nghĩa tiếng Việt. Dòng chữ nhỏ giúp phân biệt các từ gần nghĩa.</span></li>
+    <li><svg width="40" height="40" viewBox="0 0 40 40"><circle cx="20" cy="20" r="17" fill="#f08a24"/><circle cx="20" cy="20" r="11" fill="#fffaf0"/><path d="M4 34 L36 6" stroke="#e2ad28" stroke-width="4" stroke-linecap="round"/></svg><span>Vuốt qua quả có chữ Hán đúng nghĩa để chém.</span></li>
+    <li><svg width="40" height="40" viewBox="0 0 40 40"><text x="20" y="28" text-anchor="middle" font-size="24" fill="#b31916">♥</text></svg><span>${LIVES} mạng, ${ROUND_TIME} giây. Chém nhầm hoặc để rơi quả đúng thì mất 1 mạng.</span></li>
+  </ul>
+  <div class="who"><input id="ten" placeholder="Họ và tên" autocomplete="name"><input id="lop" placeholder="Lớp"></div>
+  <p class="warn" id="warn"></p>
+  ${readBest() ? `<p class="best">Kỷ lục trên máy này: ${readBest()} điểm</p>` : ''}
+  <button class="btn" id="startBtn">Bắt đầu</button></div>`;
+try { const w = JSON.parse(localStorage.getItem(WHO_KEY) || 'null'); if (w){ $('ten').value = w.ten || ''; $('lop').value = w.lop || ''; } } catch(e){}
+['ten','lop'].forEach(id => $(id).addEventListener('keydown', e => { if (e.key === 'Enter') start(); }));
+$('startBtn').onclick = start;
+
+setMute(muted);
+$('mute').onclick = () => { ac(); setMute(!muted); };
+document.addEventListener('visibilitychange', () => { paused = document.hidden; });
+$('prompt').innerHTML = promptHTML('我');
+hud();
+(document.fonts ? document.fonts.load('700 40px "Noto Serif SC"', '我你他她它们') : Promise.resolve())
+  .catch(()=>{}).finally(() => requestAnimationFrame(t => { lastT = t; step(t); }));
+</script>
+</body>
+</html>
