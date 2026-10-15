@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bảng xếp hạng · Chém chữ Hán</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&family=Quicksand:wght@500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+/* ===== TOKEN CHUNG — 奇妙汉语 ===== */
+:root{
+  --brand:#0b5a2a; --brand-soft:#eaf8ef; --gold:#e2ad28; --red:#b31916;
+  --ink:#3a3a3a; --muted:#7c7264; --line:#d8c28a; --line-soft:rgba(11,90,42,.18);
+  --surface:#fff; --surface-2:#faf7f0;
+  --r-card:18px; --r-box:12px; --r-pill:999px;
+  --shadow:0 10px 28px rgba(0,0,0,.08); --shadow-hover:0 14px 36px rgba(11,90,42,.13);
+  --font-ui:'Quicksand',system-ui,Arial,sans-serif; --font-cn:'Noto Serif SC',serif;
+  --fs-word:38px; --fs-cn:17px; --fs-py:16px; --fs-text:15px; --fs-label:11px;
+}
+*{box-sizing:border-box}
+body{margin:0;background:transparent;color:var(--ink);font-family:var(--font-ui);font-weight:600}
+button{font-family:inherit}
+.btn{border:2px solid var(--brand);background:#fff;color:var(--brand);border-radius:var(--r-pill);
+     padding:8px 14px;font-weight:800;cursor:pointer;transition:.15s;font-size:14px}
+.btn:hover,.btn.active{background:var(--brand);color:#fff;transform:translateY(-1px)}
+.btn:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.card{background:var(--surface);border:1px solid var(--line-soft);border-radius:var(--r-card);box-shadow:var(--shadow)}
+
+/* ===== BẢNG XẾP HẠNG GAME ===== */
+.wrap{max-width:1200px;margin:0 auto;padding:16px}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:14px 16px;margin-bottom:14px}
+.bar h1{margin:0;font-size:24px;color:var(--brand);margin-right:auto}
+.bar h1 .cn{font-family:var(--font-cn);color:var(--red)}
+.seg{display:inline-flex;border:2px solid var(--brand);border-radius:var(--r-pill);overflow:hidden}
+.seg button{border:0;background:#fff;color:var(--brand);padding:7px 12px;font-weight:800;cursor:pointer;font-size:13px}
+.seg button.on{background:var(--brand);color:#fff}
+.auto{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);cursor:pointer}
+.meta{font-size:13px;color:var(--muted);padding:0 4px 10px;display:flex;flex-wrap:wrap;gap:6px 16px}
+.meta .err{color:var(--red)}
+.main{display:grid;grid-template-columns:1fr 260px;gap:14px;align-items:start}
+.podium{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px}
+.pod{padding:16px 12px;text-align:center;position:relative;transition:.3s}
+.pod .medal{width:46px;height:46px;border-radius:50%;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;
+            font-size:22px;font-weight:800;color:#fff}
+.pod.r1 .medal{background:#e2ad28} .pod.r2 .medal{background:#9aa4ad} .pod.r3 .medal{background:#c17f45}
+.pod.r1{border:2px solid var(--gold);transform:translateY(-6px)}
+.pod .nm{font-size:20px;font-weight:800;line-height:1.25;word-break:break-word}
+.pod .cl{font-size:13px;color:var(--muted)}
+.pod .pt{font-size:40px;font-weight:800;color:var(--brand);line-height:1.1;margin-top:6px}
+.pod .sub{font-size:12px;color:var(--muted)}
+.pod.empty{opacity:.4}
+.tbl{overflow-x:auto;padding:4px 4px 8px}
+table{width:100%;border-collapse:collapse;font-size:17px}
+th{font-size:12px;color:var(--muted);text-align:left;padding:10px 12px;border-bottom:2px solid var(--line-soft);white-space:nowrap}
+td{padding:10px 12px;border-bottom:1px solid var(--line-soft)}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+th.key,td.key{background:var(--brand-soft);color:var(--brand);font-weight:800}
+td.rank{width:56px;color:var(--muted);font-weight:800}
+tr.flash td{animation:flash 1.6s ease-out}
+@keyframes flash{from{background:#fff2c8}to{background:transparent}}
+.none{padding:30px;text-align:center;color:var(--muted)}
+.side{padding:16px;text-align:center}
+.side h2{font-size:16px;margin:0 0 10px;color:var(--brand)}
+.side input{width:100%;border:2px solid var(--line-soft);border-radius:var(--r-box);padding:8px 10px;font:inherit;font-size:13px}
+.side input:focus{outline:none;border-color:var(--brand)}
+#qr{display:flex;justify-content:center;margin:12px 0 4px;min-height:20px}
+#qr img,#qr canvas{border:8px solid #fff;border-radius:8px;box-shadow:0 0 0 1px var(--line-soft)}
+.side p{font-size:12px;color:var(--muted);margin:6px 0 0;line-height:1.5}
+@media (max-width:860px){.main{grid-template-columns:1fr}.side{order:-1}}
+@media (max-width:560px){.podium{grid-template-columns:1fr}.pod.r1{transform:none}table{font-size:15px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="bar card">
+    <h1>Bảng xếp hạng · Chém chữ Hán</h1>
+    <div class="seg" role="group" aria-label="Xếp hạng theo">
+      <button data-m="best" class="on">Ván cao nhất</button><button data-m="first">Ván đầu</button>
+    </div>
+    <label class="auto"><input type="checkbox" id="auto" checked> Tự cập nhật</label>
+    <button class="btn" id="refresh">Cập nhật</button>
+    <button class="btn" id="newSession">Bắt đầu buổi mới</button>
+  </div>
+  <div class="meta" id="meta"></div>
+  <div class="main">
+    <div>
+      <div class="podium" id="podium"></div>
+      <div class="card tbl" id="tbl"></div>
+    </div>
+    <div class="card side">
+      <h2>Quét để vào chơi</h2>
+      <input id="link" placeholder="Dán link game vào đây">
+      <div id="qr"></div>
+      <p>Link được nhớ trên máy này, buổi sau không cần dán lại.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===== CẤU HÌNH: phải khớp với chem-dai-tu.html ===== */
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxvHN55cw3hIJFVU7cflv07WtsnSWgF8tm-kc3esYxST-uVcyrCRc4_yP8doZ_jUQG3/exec';
+const LESSON = 'game-chem-chu-han';
+const SESSION_KEY = 'qmhy:bxh-game:buoi', LINK_KEY = 'qmhy:bxh-game:link';
+const EVERY = 5000;                                   // tự cập nhật mỗi 5 giây
+
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const norm = s => String(s||'').trim().replace(/\s+/g,' ').toLowerCase();
+const store = {
+  get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } },
+  set(k,v){ try { localStorage.setItem(k,v); } catch(e){} }
+};
+let mode = 'best', rows = [], prev = {}, timer = null, busy = false;
+let since = +store.get(SESSION_KEY) || 0;
+
+/* Thời điểm chơi lấy từ attemptId (game tạo dạng <mili-giây>_<mã>), nên lọc theo buổi chính xác */
+const playedAt = r => +String(r.attemptId||'').split('_')[0] || 0;
+
+function group(list){
+  const by = {};
+  list.forEach(r => {
+    const key = norm(r.hoTenHocSinh) + '|' + norm(r.lop);
+    const t = playedAt(r);
+    const g = by[key] || (by[key] = {key, ten:r.hoTenHocSinh, lop:r.lop, n:0, best:null, first:null});
+    g.n++;
+    if (!g.first || t < playedAt(g.first)) g.first = r;
+    if (!g.best || r.score > g.best.score || (r.score === g.best.score && t < playedAt(g.best))) g.best = r;
+  });
+  const pick = g => mode === 'best' ? g.best : g.first;
+  return Object.values(by).sort((a,b) =>
+    pick(b).score - pick(a).score ||
+    (pick(b).bestStreak||0) - (pick(a).bestStreak||0) ||   // bằng điểm: chuỗi chém đúng dài hơn
+    playedAt(pick(a)) - playedAt(pick(b)));                 // rồi tới ai đạt trước
+}
+
+function render(){
+  const list = rows.filter(r => playedAt(r) >= since);
+  const gs = group(list), pick = g => mode === 'best' ? g.best : g.first;
+  const changed = new Set(gs.filter(g => prev[g.key] !== undefined && prev[g.key] !== g.best.score + '/' + g.n).map(g => g.key));
+  prev = {}; gs.forEach(g => prev[g.key] = g.best.score + '/' + g.n);
+
+  $('podium').innerHTML = [0,1,2].map(i => {
+    const g = gs[i];
+    if (!g) return `<div class="pod card r${i+1} empty"><div class="medal">${i+1}</div><div class="nm">—</div></div>`;
+    return `<div class="pod card r${i+1}"><div class="medal">${i+1}</div>
+      <div class="nm">${esc(g.ten)}</div><div class="cl">Lớp ${esc(g.lop)}</div>
+      <div class="pt">${pick(g).score}</div><div class="sub">điểm · ${g.n} ván</div></div>`;
+  }).join('');
+
+  const kb = mode === 'best' ? ' key' : '', kf = mode === 'first' ? ' key' : '';
+  $('tbl').innerHTML = gs.length ? `<table><thead><tr><th>Hạng</th><th>Học sinh</th><th>Lớp</th>
+      <th class="num${kb}">Ván cao nhất</th><th class="num${kf}">Ván đầu</th><th class="num">Số ván</th></tr></thead><tbody>${
+      gs.map((g,i) => `<tr class="${changed.has(g.key)?'flash':''}"><td class="rank">${i+1}</td><td>${esc(g.ten)}</td><td>${esc(g.lop)}</td>
+        <td class="num${kb}">${g.best.score}</td><td class="num${kf}">${g.first.score}</td><td class="num">${g.n}</td></tr>`).join('')
+    }</tbody></table>` : `<div class="none">Chưa có em nào chơi trong buổi này.</div>`;
+
+  const d = since ? new Date(since) : null;
+  $('meta').innerHTML = `<span>${gs.length} em · ${list.length} ván</span>
+    <span>${d ? 'Tính từ ' + d.toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'}) + ' ngày ' + d.toLocaleDateString('vi-VN') : 'Đang tính tất cả các buổi'}</span>
+    <span id="stamp"></span>`;
+}
+
+function load(){
+  if (busy) return; busy = true;
+  fetch(SHEET_URL + '?action=attempts&lesson=' + encodeURIComponent(LESSON) + '&t=' + Date.now())
+    .then(r => r.json())
+    .then(d => {
+      if (!d.ok) throw new Error(d.error || 'lỗi');
+      rows = d.rows || []; render();
+      $('stamp').textContent = 'Cập nhật lúc ' + new Date().toLocaleTimeString('vi-VN');
+    })
+    .catch(err => { render(); $('stamp').innerHTML = '<span class="err">Chưa tải được dữ liệu, kiểm tra mạng.</span>'; })
+    .finally(() => busy = false);
+}
+
+function schedule(){
+  clearInterval(timer);
+  if ($('auto').checked) timer = setInterval(() => { if (!document.hidden) load(); }, EVERY);
+}
+
+document.querySelectorAll('.seg button').forEach(b => b.onclick = () => {
+  mode = b.dataset.m;
+  document.querySelectorAll('.seg button').forEach(x => x.classList.toggle('on', x === b));
+  render();
+});
+$('auto').onchange = schedule;
+$('refresh').onclick = load;
+$('newSession').onclick = () => {
+  if (!confirm('Bắt đầu buổi mới? Bảng sẽ chỉ tính các ván chơi từ bây giờ. Điểm cũ vẫn còn trên Sheet, không bị xóa.')) return;
+  since = Date.now(); store.set(SESSION_KEY, since); prev = {}; render();
+};
+
+/* ===== MÃ QR VÀO GAME ===== */
+function drawQR(){
+  const url = $('link').value.trim(), box = $('qr');
+  box.innerHTML = '';
+  if (!url || typeof QRCode === 'undefined') return;
+  new QRCode(box, {text:url, width:200, height:200, colorDark:'#0b5a2a', colorLight:'#ffffff', correctLevel:QRCode.CorrectLevel.M});
+}
+$('link').value = store.get(LINK_KEY) || '';
+$('link').addEventListener('input', () => { store.set(LINK_KEY, $('link').value.trim()); drawQR(); });
+drawQR();
+
+render(); load(); schedule();
+</script>
+</body>
+</html>
