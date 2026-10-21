@@ -50,60 +50,50 @@ body::after{content:"";position:fixed;inset:0;background-image:var(--logo);backg
 .hdr .links svg{width:16px;height:16px}
 @media (max-width:380px){ .hdr .slogan{font-size:20px} }
 
-/* ===== KHUNG GAME ===== */
+/* ===== KHUNG GAME (gọn để vừa một màn hình điện thoại, không phải kéo) ===== */
 .wrap{max-width:720px;margin:0 auto;padding:12px 12px 24px}
-.box{padding:16px;position:relative}
-.hud{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--muted)}
+.box{padding:12px 14px 14px;position:relative}
+.hud{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted)}
 .hud b{color:var(--ink)}
-.hud .sc{margin-left:auto;font-size:16px;color:var(--brand)}
-.mute{border:none;background:none;font-size:18px;cursor:pointer;padding:4px;color:var(--muted)}
-.timer{height:8px;border-radius:var(--r-pill);background:var(--surface-2);border:1px solid var(--line-soft);overflow:hidden;margin:10px 0 4px}
+.hud .sc{margin-left:auto;font-size:15px;color:var(--brand)}
+.hud .secs{min-width:44px;text-align:right;font-weight:800;color:var(--brand)}
+.hud .secs.low{color:var(--red)}
+.mute{border:none;background:none;font-size:17px;cursor:pointer;padding:2px;color:var(--muted)}
+.timer{height:7px;border-radius:var(--r-pill);background:var(--surface-2);border:1px solid var(--line-soft);overflow:hidden;margin:8px 0 10px}
 .timer i{display:block;height:100%;width:100%;background:var(--brand);transform-origin:left;transition:background .3s}
 .timer.low i{background:var(--red)}
-.secs{font-size:12px;color:var(--muted);text-align:right;min-height:16px}
 
 /* Đề bài: ô chữ cần ghép */
-.ask{display:flex;gap:14px;align-items:center;margin:6px 0 14px}
-.slot{flex:none;width:96px;height:96px;border:3px dashed var(--gold);border-radius:var(--r-box);background:#fff8e6;
-      display:grid;place-items:center;font-size:60px;color:var(--gold);font-family:var(--font-cn);font-weight:900;position:relative}
+.ask{display:flex;gap:12px;align-items:center;margin:0 0 10px}
+.slot{flex:none;width:76px;height:76px;border:3px dashed var(--gold);border-radius:var(--r-box);background:#fff8e6;
+      display:grid;place-items:center;font-size:48px;color:var(--gold);font-family:var(--font-cn);font-weight:900;position:relative}
 .slot.ok{border-style:solid;border-color:var(--brand);background:var(--brand-soft);color:var(--red)}
 .slot.bad{border-style:solid;border-color:var(--red);background:#fdecec;color:var(--red)}
-.slot .pop{position:absolute;top:-14px;right:-10px;background:var(--brand);color:#fff;font-family:var(--font-ui);font-size:14px;
-      font-weight:800;padding:2px 9px;border-radius:var(--r-pill);animation:pop .5s ease-out}
+.slot .pop{position:absolute;top:-12px;right:-10px;background:var(--brand);color:#fff;font-family:var(--font-ui);font-size:13px;
+      font-weight:800;padding:2px 8px;border-radius:var(--r-pill);animation:pop .4s ease-out}
 @keyframes pop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
-.meta .w{font-family:var(--font-cn);font-weight:700;font-size:26px;color:var(--ink);line-height:1.2}
+.meta{min-width:0}
+.meta .w{font-family:var(--font-cn);font-weight:700;font-size:22px;color:var(--ink);line-height:1.2}
 .meta .w .hole{display:inline-block;width:.9em;height:.9em;vertical-align:-.08em;border:2px dashed var(--gold);border-radius:5px;background:#fff8e6}
 .meta .p{font-size:var(--fs-py);color:var(--brand);font-weight:800}
-.meta .v{font-size:var(--fs-text);margin-top:2px}
-.meta .read{font-size:13px;color:var(--muted);margin-top:4px}
+.meta .v{font-size:14px;line-height:1.35}
+.meta .read{font-size:12px;color:var(--muted);margin-top:2px}
 .meta .read b{color:var(--brand)}
-.need{font-size:14px;margin:0 0 8px}
+.need{font-size:13px;margin:0 0 6px}
 .need b{color:var(--red)}
 
-/* 4 ô bộ phận */
+/* Ô bộ phận */
 .tiles{display:grid;grid-template-columns:repeat(var(--n,4),1fr);gap:8px}
-.tile{border:2px solid var(--line);background:#fff;border-radius:var(--r-box);padding:10px 4px 8px;cursor:pointer;
-      display:flex;flex-direction:column;align-items:center;gap:2px;transition:transform .12s,border-color .12s,background .12s;min-height:92px}
-.tile .hanzi{font-size:40px;line-height:1.1;color:var(--ink)}
-.tile .py{font-size:13px;color:var(--muted);font-weight:700}
+.tile{border:2px solid var(--line);background:#fff;border-radius:var(--r-box);padding:6px 2px 5px;cursor:pointer;touch-action:manipulation;
+      display:flex;flex-direction:column;align-items:center;gap:0;transition:transform .12s,border-color .12s,background .12s;min-height:74px}
+.tile .hanzi{font-size:36px;line-height:1.15;color:var(--ink)}
+.tile .py{font-size:12px;color:var(--muted);font-weight:700}
 .tile:hover{transform:translateY(-2px)}
 .tile.sel{border-color:var(--gold);background:#fff8e6;box-shadow:0 0 0 3px rgba(226,173,40,.35)}
 .tile.right{border-color:var(--brand);background:var(--brand-soft)}
 .tile.wrong{border-color:var(--red);background:#fdecec}
 .tile.missed{border-color:var(--brand);border-style:dashed}
 .tile:disabled{cursor:default;transform:none;color:inherit}
-
-/* Lời giải sau mỗi câu */
-.note{margin-top:12px;border-top:1px solid var(--line-soft);padding-top:10px;font-size:14px}
-.note strong{display:block;font-size:15px;margin-bottom:6px}
-.note.ok strong{color:var(--brand)} .note.bad strong{color:var(--red)}
-.row{display:grid;grid-template-columns:44px 58px 1fr;gap:6px;align-items:center;padding:3px 0}
-.row .hanzi{font-size:24px;color:var(--red);text-align:center}
-.row .p{color:var(--brand);font-weight:800}
-.row.whole{border-top:1px dashed var(--line);margin-top:4px;padding-top:6px}
-.row.whole .hanzi{font-size:30px}
-.struct{color:var(--muted);font-size:13px;margin-top:4px}
-.next{display:flex;justify-content:flex-end;margin-top:12px}
 
 /* Màn bắt đầu và kết quả */
 .panel{text-align:center}
@@ -122,13 +112,24 @@ body::after{content:"";position:fixed;inset:0;background-image:var(--logo);backg
 .send{font-size:13px;margin:4px 0 10px;color:var(--muted);min-height:18px}
 .send.ok{color:var(--brand)} .send.bad{color:var(--red)}
 .send button{margin-left:6px;padding:4px 12px;font-size:13px}
-.review{list-style:none;padding:0;margin:8px 0 14px;display:grid;grid-template-columns:1fr 1fr;gap:6px;text-align:left}
-.review li{display:flex;align-items:center;gap:8px;border:1px solid var(--line-soft);border-radius:10px;padding:6px 8px;font-size:13px}
-.review .hanzi{font-size:22px;color:var(--red)}
-.review .got{color:var(--muted)}
-.review .mark{margin-left:auto;font-weight:800}
-.review .y{color:var(--brand)} .review .x{color:var(--red)}
-@media (max-width:380px){.tile .hanzi{font-size:34px}.slot{width:84px;height:84px;font-size:52px}}
+.acts{display:flex;justify-content:center;gap:8px;margin:4px 0 14px}
+
+/* Xem lại sau ván: nghĩa của chữ và các bộ phận cấu thành */
+.rv-title{text-align:left;font-size:15px;color:var(--brand);margin:6px 0 8px;border-top:1px solid var(--line-soft);padding-top:12px}
+.rv{text-align:left;border:1px solid var(--line-soft);border-left:4px solid var(--brand);border-radius:10px;padding:8px 10px;margin-bottom:8px;font-size:13px}
+.rv.bad{border-left-color:var(--red);background:#fffafa}
+.rv-h{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.rv-h .hanzi{font-size:30px;color:var(--red);line-height:1}
+.rv-h .p{color:var(--brand);font-weight:800;font-size:15px}
+.rv-h .mark{margin-left:auto;font-weight:800;color:var(--brand)}
+.rv.bad .rv-h .mark{color:var(--red)}
+.rv-got{color:var(--red);margin-top:4px}
+.rv-parts{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.rv-parts span{background:var(--surface-2);border:1px solid var(--line-soft);border-radius:8px;padding:3px 8px}
+.rv-parts .hanzi{color:var(--red);font-size:17px;margin-right:4px}
+.rv-parts i{font-style:normal;color:var(--brand);font-weight:800;margin-right:4px}
+.struct{color:var(--muted);font-size:12px;margin-top:5px}
+@media (max-width:380px){.tile .hanzi{font-size:30px}.tile{min-height:66px}.slot{width:66px;height:66px;font-size:42px}.meta .w{font-size:20px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
@@ -165,6 +166,7 @@ const BEST_KEY = 'qmhy:dinh-luyen-chu-' + D.id + ':best', MUTE_KEY = 'qmhy:game:
 /* ===== CÀI ĐẶT ===== */
 const Q_TIME = 15;                                    // giây cho mỗi câu
 const BASE = 50, PER_SEC = 10;                        // đúng: 50 điểm + 10 điểm cho mỗi giây còn lại
+const FLASH_MS = 700;                                 // hiện đúng/sai chớp nhoáng rồi tự sang câu mới
 
 
 
@@ -208,8 +210,9 @@ function intro(){
     <h1>Đỉnh luyện chữ · ${D.ten}</h1>
     <ol class="rules">
       <li>Mỗi câu cho phiên âm và nghĩa của một chữ. Em chọn các bộ phận ghép thành chữ đó.</li>
-      <li>Mỗi câu ghi rõ cần chọn mấy bộ phận. Chọn đủ là máy chấm ngay.</li>
+      <li>Mỗi câu ghi rõ cần chọn mấy bộ phận. Chọn đủ là máy chấm và chuyển ngay sang câu mới.</li>
       <li>Mỗi câu có ${Q_TIME} giây. Đúng được ${BASE} điểm, cộng thêm ${PER_SEC} điểm cho mỗi giây còn lại.</li>
+      <li>Hết ván mới hiện phần giải nghĩa từng chữ và các bộ phận để em xem lại.</li>
     </ol>
     <div class="who"><input id="ten" placeholder="Họ và tên" autocomplete="name"><input id="lop" placeholder="Lớp"></div>
     <p class="warn" id="warn"></p>
@@ -249,17 +252,17 @@ function ask(){
        <div class="read">Chữ cần ghép đọc là <b>${q.py}</b></div>`
     : `<div class="p" style="font-size:22px">${q.py}</div><div class="v">${esc(q.vi)}</div>`;
   app.innerHTML = `
-    <div class="hud"><span>Câu <b>${idx+1}</b>/${qs.length}</span><span>Chuỗi đúng: <b id="stk">${streak}</b></span>
-      <span class="sc" id="sc">${score} điểm</span>
+    <div class="hud"><span>Câu <b>${idx+1}</b>/${qs.length}</span><span>Chuỗi: <b id="stk">${streak}</b></span>
+      <span class="sc" id="sc">${score} điểm</span><span class="secs" id="secs">${Q_TIME}s</span>
       <button class="mute" id="mute" aria-label="Bật hoặc tắt âm thanh">${muted ? '🔇' : '🔊'}</button></div>
-    <div class="timer" id="tm"><i id="bar"></i></div><div class="secs" id="secs">${Q_TIME} giây</div>
+    <div class="timer" id="tm"><i id="bar"></i></div>
     <div class="ask"><div class="slot" id="slot">?</div><div class="meta">${word}</div></div>
     <p class="need">Chọn <b>${q.parts.length}</b> bộ phận ghép thành chữ này.</p>
     <div class="tiles" id="tiles" style="--n:${tiles.length}">${tiles.map((p,i) => `<button class="tile" data-i="${i}" aria-pressed="false">
-      <span class="hanzi">${p}</span><span class="py">${partPy(p)}</span></button>`).join('')}</div>
-    <div id="after"></div>`;
+      <span class="hanzi">${p}</span><span class="py">${partPy(p)}</span></button>`).join('')}</div>`;
   $('tiles').querySelectorAll('.tile').forEach(b => b.onclick = () => pick(+b.dataset.i));
   $('mute').onclick = () => { muted = !muted; store.set(MUTE_KEY, muted ? '1' : '0'); $('mute').textContent = muted ? '🔇' : '🔊'; };
+  fitCard();
   qStart = performance.now();
   stop(); timer = setInterval(tick, 100);
   requestAnimationFrame(drawBar);
@@ -269,8 +272,8 @@ function tick(){
   const el = (performance.now() - qStart) / 1000, before = Math.ceil(left);
   left = Math.max(0, Q_TIME - el);
   const now = Math.ceil(left);
-  $('secs').textContent = now + ' giây';
-  $('tm').classList.toggle('low', left <= 5);
+  $('secs').textContent = now + 's';
+  $('tm').classList.toggle('low', left <= 5); $('secs').classList.toggle('low', left <= 5);
   if (now < before && now <= 5 && now > 0) sfx.tick();
   if (left <= 0) check(true);
 }
@@ -280,6 +283,11 @@ function drawBar(){
   requestAnimationFrame(drawBar);
 }
 function stop(){ if (timer){ clearInterval(timer); timer = null; } }
+/* Khung game không vừa màn hình thì tự cuộn để cả khung nằm gọn trong màn hình, học sinh không phải kéo */
+function fitCard(){
+  const r = app.getBoundingClientRect();
+  if (r.bottom > innerHeight || r.top < 0) window.scrollTo({top: Math.max(0, scrollY + r.top - 8), behavior: 'smooth'});
+}
 
 function pick(i){
   if (locked) return;
@@ -301,12 +309,12 @@ function check(timeout){
   const gain = ok ? BASE + PER_SEC * secsLeft : 0;
   if (ok){ score += gain; streak++; bestStreak = Math.max(bestStreak, streak); sfx.ok(streak); }
   else { streak = 0; sfx.bad(); }
-  answers.push({c:q.c, ok, got: timeout && !got.length ? 'hết giờ' : got.join(' + ')});
+  answers.push({q, ok, got: timeout && !got.length ? 'hết giờ' : got.join(' + ')});
   log.push({index:log.length+1, type:'ghep', typeName:'Ghép bộ phận thành chữ',
     question: `${q.py} – ${q.vi}`, userAnswer: timeout ? (got.join('+') || 'hết giờ') : got.join('+'),
     correctAnswer: q.c + ' = ' + q.parts.join('+'), correct: ok, secondsLeft: secsLeft});
 
-  document.querySelectorAll('.meta .hole').forEach(h => h.outerHTML = `<span style="color:var(--red)">${q.c}</span>`);
+  /* Chớp kết quả ngay trên ô chữ và các ô bộ phận, không thêm dòng nào nên khung không dài ra */
   const slot = $('slot');
   slot.textContent = q.c; slot.classList.add(ok ? 'ok' : 'bad');
   if (ok) slot.insertAdjacentHTML('beforeend', `<span class="pop">+${gain}</span>`);
@@ -319,19 +327,8 @@ function check(timeout){
     else if (isPart) b.classList.add('missed');
   });
   $('sc').textContent = score + ' điểm'; $('stk').textContent = streak;
-  $('secs').textContent = timeout ? 'Hết giờ' : secsLeft + ' giây';
-
-  const mean = q.word ? `${q.vi} (trong từ ${q.word.replace(/□/g, q.c)})` : q.vi;
-  const head = ok ? `Đúng rồi. +${gain} điểm`
-             : timeout ? 'Hết giờ.'
-             : `Chưa đúng. Em chọn ${got.join(' + ')}.`;
-  $('after').innerHTML = `<div class="note ${ok ? 'ok' : 'bad'}" aria-live="polite"><strong>${head}</strong>
-    ${q.parts.map(p => `<div class="row"><span class="hanzi">${p}</span><span class="p">${partPy(p)}</span><span>${esc(PART[p][1])}</span></div>`).join('')}
-    <div class="row whole"><span class="hanzi">${q.c}</span><span class="p">${q.py}</span><span>${esc(mean)}</span></div>
-    <div class="struct">Cấu trúc: ${q.st}</div></div>
-    <div class="next"><button class="btn solid" id="nx">${idx === qs.length-1 ? 'Xem kết quả' : 'Câu tiếp theo'}</button></div>`;
-  $('nx').onclick = () => { idx++; idx < qs.length ? ask() : result(); };
-  $('nx').focus({preventScroll:true});
+  if (timeout) $('secs').textContent = 'Hết giờ';
+  setTimeout(() => { idx++; idx < qs.length ? ask() : result(); }, FLASH_MS);
 }
 
 /* ===== KẾT QUẢ ===== */
@@ -341,16 +338,29 @@ function result(){
   const best = +store.get(BEST_KEY) || 0, isNew = score > best;
   if (isNew) store.set(BEST_KEY, score);
   sfx.end(isNew);
-  const msg = n === t ? 'Hoàn hảo, em ghép đúng tất cả.' : n >= t*0.8 ? 'Rất tốt. Xem lại vài chữ sai bên dưới nhé.' : 'Xem lại các chữ sai rồi chơi lại nhé.';
+  const msg = n === t ? 'Hoàn hảo, em ghép đúng tất cả.' : n >= t*0.8 ? 'Rất tốt. Xem lại vài chữ sai bên dưới nhé.' : 'Xem lại các chữ sai bên dưới rồi chơi lại nhé.';
+  /* Chữ sai lên trước để em xem lại trước */
+  const list = [...answers.filter(a => !a.ok), ...answers.filter(a => a.ok)];
+  const card = a => {
+    const q = a.q, mean = q.word ? `${q.vi} · trong từ ${q.word.replace(/□/g, q.c)} (${q.wpy})` : q.vi;
+    return `<div class="rv ${a.ok ? '' : 'bad'}">
+      <div class="rv-h"><span class="hanzi">${q.c}</span><span class="p">${q.py}</span><span>${esc(mean)}</span>
+        <span class="mark">${a.ok ? 'Đúng' : 'Sai'}</span></div>
+      ${a.ok ? '' : `<div class="rv-got">Em chọn: <span class="hanzi">${esc(a.got)}</span></div>`}
+      <div class="rv-parts">${q.parts.map(p => `<span><b class="hanzi">${p}</b><i>${partPy(p)}</i>${esc(PART[p][1])}</span>`).join('')}</div>
+      <div class="struct">Cấu trúc: ${q.st}</div></div>`;
+  };
   app.innerHTML = `<div class="panel">
     <div class="big">${score}</div><p>điểm · ${esc(playerName)}, lớp ${esc(playerClass)}</p>
     <p class="send" id="sendSt"></p>
     <div class="stats"><span><b>${n}/${t}</b>câu đúng</span><span><b>${bestStreak}</b>chuỗi đúng dài nhất</span></div>
     <p>${msg}${isNew ? ' Kỷ lục mới trên máy này!' : ''}</p>
-    <ul class="review">${answers.map(a => `<li><span class="hanzi">${a.c}</span>
-      ${a.ok ? '' : `<span class="got hanzi" style="font-size:13px">${esc(a.got)}</span>`}
-      <span class="mark ${a.ok ? 'y' : 'x'}">${a.ok ? 'Đúng' : 'Sai'}</span></li>`).join('')}</ul>
-    <button class="btn solid" id="again">Chơi lại</button></div>`;
+    <div class="acts"><button class="btn solid" id="again">Chơi lại</button></div>
+    <h3 class="rv-title">Xem lại từng chữ</h3>
+    ${list.map(card).join('')}
+    <div class="acts"><button class="btn solid" id="again2">Chơi lại</button></div></div>`;
+  $('again2').onclick = restart;
+  window.scrollTo({top: Math.max(0, scrollY + app.getBoundingClientRect().top - 8), behavior: 'smooth'});
   $('again').onclick = restart;
   submit();
 }
