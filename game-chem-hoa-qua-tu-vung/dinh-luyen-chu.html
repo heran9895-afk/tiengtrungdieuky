@@ -272,12 +272,30 @@ function draw(){
   return bag.pop();
 }
 
+/* Xếp ô cho một chữ, khác với lần gần nhất chữ đó xuất hiện (kể cả ở ván trước):
+   - các ô đúng không nằm lại đúng những vị trí cũ, để em không nhớ vị trí mà phải nhìn bộ phận;
+   - ưu tiên đổi bộ phận nhiễu khác lần trước, khi bài có đủ bộ phận nhiễu để đổi. */
+const lastLayout = new Map();
+function layout(q){
+  const need = Math.max(4, q.parts.length + 1) - q.parts.length;
+  const prev = lastLayout.get(q.c);
+  const pos = t => t.map((p,i) => q.parts.includes(p) ? i : -1).filter(i => i >= 0).join(',');
+  const fresh = prev ? q.fake.filter(p => !prev.fakes.includes(p)) : q.fake;
+  const pool = fresh.length >= need ? fresh : q.fake;
+  let t, fakes, tries = 0;
+  do {
+    fakes = shuffle(pool).slice(0, need);
+    t = shuffle([...q.parts, ...fakes]);
+  } while (prev && pos(t) === prev.pos && ++tries < 50);
+  lastLayout.set(q.c, {pos: pos(t), fakes});
+  return t;
+}
+
 /* ===== MỘT CÂU ===== */
 function next(){
   if (!playing) return;
   q = draw();
-  const fakes = shuffle(q.fake).slice(0, Math.max(4, q.parts.length + 1) - q.parts.length);
-  tiles = shuffle([...q.parts, ...fakes]);
+  tiles = layout(q);
   sel = []; locked = false;
   const word = q.word
     ? `<div class="w">${[...q.word].map(x => x === '□' ? '<span class="hole"></span>' : x).join('')}</div>
