@@ -58,6 +58,9 @@ body::after{content:"";position:fixed;inset:0;background-image:var(--logo);backg
 .hud .sc{margin-left:auto;font-size:15px;color:var(--brand)}
 .hud .secs{min-width:44px;text-align:right;font-weight:800;color:var(--brand)}
 .hud .secs.low{color:var(--red)}
+.hearts{display:inline-flex;gap:2px;font-size:16px;line-height:1}
+.hearts span{color:#e3d9c6}.hearts span.on{color:var(--red)}
+.end-why{margin:0;font-weight:800;color:var(--muted);font-size:14px}
 .mute{border:none;background:none;font-size:17px;cursor:pointer;padding:2px;color:var(--muted)}
 .timer{height:7px;border-radius:var(--r-pill);background:var(--surface-2);border:1px solid var(--line-soft);overflow:hidden;margin:8px 0 10px}
 .timer i{display:block;height:100%;width:100%;background:var(--brand);transform-origin:left;transition:background .3s}
@@ -107,7 +110,7 @@ body::after{content:"";position:fixed;inset:0;background-image:var(--logo);backg
 .who #lop{flex:0 0 96px}
 .warn{color:var(--red);font-size:13px;min-height:18px;margin:2px 0 8px}
 .big{font-size:52px;font-weight:800;color:var(--brand);line-height:1;margin-top:6px}
-.stats{display:flex;justify-content:center;gap:18px;font-size:13px;color:var(--muted);margin:10px 0}
+.stats{display:flex;justify-content:center;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--muted);margin:10px 0}
 .stats b{display:block;font-size:20px;color:var(--ink)}
 .send{font-size:13px;margin:4px 0 10px;color:var(--muted);min-height:18px}
 .send.ok{color:var(--brand)} .send.bad{color:var(--red)}
@@ -161,14 +164,16 @@ document.title = 'Đỉnh luyện chữ · ' + D.ten;
 const SHEET_URL = 'https://script.google.com/macros/s/AKfycbxvHN55cw3hIJFVU7cflv07WtsnSWgF8tm-kc3esYxST-uVcyrCRc4_yP8doZ_jUQG3/exec';
 const LESSON = D.ma;                                  // mã điểm của bài đang chơi, bảng xếp hạng lọc theo mã này
 const WHO_KEY = 'qmhy:hoc-sinh';                     // dùng chung với các game khác: nhớ tên và lớp
-const BEST_KEY = 'qmhy:dinh-luyen-chu-' + D.id + ':best', MUTE_KEY = 'qmhy:game:mute';
+const BEST_KEY = 'qmhy:dinh-luyen-chu-lien-tuc-' + D.id + ':best', MUTE_KEY = 'qmhy:game:mute';
 
-/* ===== CÀI ĐẶT ===== */
-const Q_TIME = 15;                                    // giây cho mỗi câu
-const BASE = 50, PER_SEC = 10;                        // đúng: 50 điểm + 10 điểm cho mỗi giây còn lại
+/* ===== CÀI ĐẶT: chơi liên tục như game chém, chung một đồng hồ cho cả ván ===== */
+/* Thời gian ván tính theo số chữ của bài: 4 giây mỗi chữ, làm tròn lên bội số của 5, ít nhất 60 giây.
+   Đo thử: người chơi nhanh, không sai cần khoảng 2,5–3 giây mỗi chữ (đọc đề, chọn 2–3 ô, 0,7 giây xem đúng/sai),
+   nên 4 giây đủ để em chơi tốt đi hết ít nhất một lượt toàn bộ chữ, kể cả khi sai vài câu. */
+const SEC_PER_CHAR = 4, LIVES = 3;
+const ROUND_TIME = Math.max(60, Math.ceil(CHARS.length * SEC_PER_CHAR / 5) * 5);
 const FLASH_MS = 700;                                 // hiện đúng/sai chớp nhoáng rồi tự sang câu mới
-
-
+const gainFor = streak => 10 + Math.min(streak - 1, 4) * 5;   // giống game chém: 10 điểm, đúng liên tiếp thưởng thêm, tối đa 30
 
 const $ = id => document.getElementById(id);
 const app = $('app');
@@ -198,8 +203,8 @@ const sfx = {
 };
 
 /* ===== TRẠNG THÁI ===== */
-let qs = [], idx = 0, score = 0, streak = 0, bestStreak = 0, answers = [], log = [];
-let sel = [], locked = false, tiles = [], timer = null, left = Q_TIME, qStart = 0, playStart = 0;
+let bag = [], q = null, score = 0, streak = 0, bestStreak = 0, lives = LIVES, answers = [], log = [];
+let sel = [], locked = false, tiles = [], timer = null, left = ROUND_TIME, endAt = 0, playStart = 0, playing = false, endReason = '';
 let playerName = '', playerClass = '', attemptId = '';
 
 /* ===== MÀN BẮT ĐẦU ===== */
@@ -211,7 +216,8 @@ function intro(){
     <ol class="rules">
       <li>Mỗi câu cho phiên âm và nghĩa của một chữ. Em chọn các bộ phận ghép thành chữ đó.</li>
       <li>Mỗi câu ghi rõ cần chọn mấy bộ phận. Chọn đủ là máy chấm và chuyển ngay sang câu mới.</li>
-      <li>Mỗi câu có ${Q_TIME} giây. Đúng được ${BASE} điểm, cộng thêm ${PER_SEC} điểm cho mỗi giây còn lại.</li>
+      <li>Ván dài ${ROUND_TIME} giây, câu hỏi nối tiếp liên tục tới khi hết giờ. Em có 3 mạng, chọn sai thì mất 1 mạng.</li>
+      <li>Đúng được 10 điểm, đúng liên tiếp được thưởng thêm, tối đa 30 điểm một câu.</li>
       <li>Hết ván mới hiện phần giải nghĩa từng chữ và các bộ phận để em xem lại.</li>
     </ol>
     <div class="who"><input id="ten" placeholder="Họ và tên" autocomplete="name"><input id="lop" placeholder="Lớp"></div>
@@ -234,52 +240,70 @@ function begin(){
 }
 
 function restart(){
-  qs = shuffle(CHARS); idx = 0; score = 0; streak = 0; bestStreak = 0; answers = []; log = [];
+  bag = []; q = null; score = 0; streak = 0; bestStreak = 0; lives = LIVES; answers = []; log = []; endReason = '';
   attemptId = Date.now() + '_' + Math.random().toString(36).slice(2,8);
-  playStart = Date.now();
-  ask();
+  playStart = Date.now(); endAt = performance.now() + ROUND_TIME * 1000; left = ROUND_TIME; playing = true;
+  frame();
+  stop(); timer = setInterval(tick, 100);
+  requestAnimationFrame(drawBar);
+  next();
+}
+
+/* ===== KHUNG CHƠI: dựng một lần, mỗi câu chỉ thay phần đề và các ô ===== */
+function frame(){
+  app.innerHTML = `
+    <div class="hud"><span class="hearts" id="hearts" aria-label="Số mạng"></span><span>Chuỗi: <b id="stk">0</b></span>
+      <span class="sc" id="sc">0 điểm</span><span class="secs" id="secs">${ROUND_TIME}s</span>
+      <button class="mute" id="mute" aria-label="Bật hoặc tắt âm thanh">${muted ? '🔇' : '🔊'}</button></div>
+    <div class="timer" id="tm"><i id="bar"></i></div>
+    <div id="qbox"></div>`;
+  $('mute').onclick = () => { muted = !muted; store.set(MUTE_KEY, muted ? '1' : '0'); $('mute').textContent = muted ? '🔇' : '🔊'; };
+  drawHearts();
+  fitCard();
+}
+function drawHearts(){ $('hearts').innerHTML = Array.from({length:LIVES}, (_,i) => `<span class="${i < lives ? 'on' : ''}">♥</span>`).join(''); }
+
+/* Rút đề như chia bài: đi hết một lượt các chữ rồi mới xáo lại, không hỏi một chữ hai lần liền nhau */
+function draw(){
+  if (!bag.length){
+    bag = shuffle(CHARS);
+    if (q && bag.length > 1 && bag[bag.length-1].c === q.c) [bag[0], bag[bag.length-1]] = [bag[bag.length-1], bag[0]];
+  }
+  return bag.pop();
 }
 
 /* ===== MỘT CÂU ===== */
-function ask(){
-  const q = qs[idx];
+function next(){
+  if (!playing) return;
+  q = draw();
   const fakes = shuffle(q.fake).slice(0, Math.max(4, q.parts.length + 1) - q.parts.length);
   tiles = shuffle([...q.parts, ...fakes]);
-  sel = []; locked = false; left = Q_TIME;
+  sel = []; locked = false;
   const word = q.word
     ? `<div class="w">${[...q.word].map(x => x === '□' ? '<span class="hole"></span>' : x).join('')}</div>
        <div class="p">${q.wpy}</div><div class="v">${esc(q.vi)}</div>
        <div class="read">Chữ cần ghép đọc là <b>${q.py}</b></div>`
     : `<div class="p" style="font-size:22px">${q.py}</div><div class="v">${esc(q.vi)}</div>`;
-  app.innerHTML = `
-    <div class="hud"><span>Câu <b>${idx+1}</b>/${qs.length}</span><span>Chuỗi: <b id="stk">${streak}</b></span>
-      <span class="sc" id="sc">${score} điểm</span><span class="secs" id="secs">${Q_TIME}s</span>
-      <button class="mute" id="mute" aria-label="Bật hoặc tắt âm thanh">${muted ? '🔇' : '🔊'}</button></div>
-    <div class="timer" id="tm"><i id="bar"></i></div>
+  $('qbox').innerHTML = `
     <div class="ask"><div class="slot" id="slot">?</div><div class="meta">${word}</div></div>
     <p class="need">Chọn <b>${q.parts.length}</b> bộ phận ghép thành chữ này.</p>
     <div class="tiles" id="tiles" style="--n:${tiles.length}">${tiles.map((p,i) => `<button class="tile" data-i="${i}" aria-pressed="false">
       <span class="hanzi">${p}</span><span class="py">${partPy(p)}</span></button>`).join('')}</div>`;
   $('tiles').querySelectorAll('.tile').forEach(b => b.onclick = () => pick(+b.dataset.i));
-  $('mute').onclick = () => { muted = !muted; store.set(MUTE_KEY, muted ? '1' : '0'); $('mute').textContent = muted ? '🔇' : '🔊'; };
-  fitCard();
-  qStart = performance.now();
-  stop(); timer = setInterval(tick, 100);
-  requestAnimationFrame(drawBar);
 }
 
 function tick(){
-  const el = (performance.now() - qStart) / 1000, before = Math.ceil(left);
-  left = Math.max(0, Q_TIME - el);
+  const before = Math.ceil(left);
+  left = Math.max(0, (endAt - performance.now()) / 1000);
   const now = Math.ceil(left);
   $('secs').textContent = now + 's';
-  $('tm').classList.toggle('low', left <= 5); $('secs').classList.toggle('low', left <= 5);
+  $('tm').classList.toggle('low', left <= 10); $('secs').classList.toggle('low', left <= 10);
   if (now < before && now <= 5 && now > 0) sfx.tick();
-  if (left <= 0) check(true);
+  if (left <= 0) finish('time');
 }
 function drawBar(){
-  if (locked || !$('bar')) return;
-  $('bar').style.transform = `scaleX(${Math.max(0, 1 - (performance.now() - qStart) / 1000 / Q_TIME)})`;
+  if (!playing || !$('bar')) return;
+  $('bar').style.transform = `scaleX(${Math.max(0, (endAt - performance.now()) / 1000 / ROUND_TIME)})`;
   requestAnimationFrame(drawBar);
 }
 function stop(){ if (timer){ clearInterval(timer); timer = null; } }
@@ -290,29 +314,26 @@ function fitCard(){
 }
 
 function pick(i){
-  if (locked) return;
+  if (locked || !playing) return;
   const k = sel.indexOf(i);
   if (k >= 0) sel.splice(k,1); else sel.push(i);
   sfx.tap();
   $('tiles').querySelectorAll('.tile').forEach((b,j) => { const on = sel.includes(j); b.classList.toggle('sel', on); b.setAttribute('aria-pressed', on); });
-  if (sel.length === qs[idx].parts.length) check(false);
+  if (sel.length === q.parts.length) check();
 }
 
-/* Chọn đủ bộ phận theo thứ tự nào cũng tính đúng; lời giải hiện cấu trúc chữ để học vị trí */
-function check(timeout){
-  if (locked) return;
-  locked = true; stop();
-  const q = qs[idx];
+/* Chọn đủ bộ phận theo thứ tự nào cũng tính đúng */
+function check(){
+  locked = true;
   const got = sel.map(i => tiles[i]);
-  const ok = !timeout && got.length === q.parts.length && got.every(p => q.parts.includes(p));
-  const secsLeft = Math.ceil(left);
-  const gain = ok ? BASE + PER_SEC * secsLeft : 0;
-  if (ok){ score += gain; streak++; bestStreak = Math.max(bestStreak, streak); sfx.ok(streak); }
-  else { streak = 0; sfx.bad(); }
-  answers.push({q, ok, got: timeout && !got.length ? 'hết giờ' : got.join(' + ')});
+  const ok = got.every(p => q.parts.includes(p));
+  let gain = 0;
+  if (ok){ streak++; bestStreak = Math.max(bestStreak, streak); gain = gainFor(streak); score += gain; sfx.ok(streak); }
+  else { streak = 0; lives--; sfx.bad(); drawHearts(); }
+  answers.push({q, ok, got: got.join(' + ')});
   log.push({index:log.length+1, type:'ghep', typeName:'Ghép bộ phận thành chữ',
-    question: `${q.py} – ${q.vi}`, userAnswer: timeout ? (got.join('+') || 'hết giờ') : got.join('+'),
-    correctAnswer: q.c + ' = ' + q.parts.join('+'), correct: ok, secondsLeft: secsLeft});
+    question: `${q.py} – ${q.vi}`, userAnswer: got.join('+'),
+    correctAnswer: q.c + ' = ' + q.parts.join('+'), correct: ok});
 
   /* Chớp kết quả ngay trên ô chữ và các ô bộ phận, không thêm dòng nào nên khung không dài ra */
   const slot = $('slot');
@@ -327,41 +348,55 @@ function check(timeout){
     else if (isPart) b.classList.add('missed');
   });
   $('sc').textContent = score + ' điểm'; $('stk').textContent = streak;
-  if (timeout) $('secs').textContent = 'Hết giờ';
-  setTimeout(() => { idx++; idx < qs.length ? ask() : result(); }, FLASH_MS);
+  setTimeout(() => { if (!playing) return; lives <= 0 ? finish('lives') : next(); }, FLASH_MS);
 }
 
 /* ===== KẾT QUẢ ===== */
+function finish(reason){
+  if (!playing) return;
+  playing = false; endReason = reason; stop();
+  result();
+}
 function result(){
-  stop();
-  const n = answers.filter(a => a.ok).length, t = answers.length;
+  const n = answers.filter(a => a.ok).length, w = answers.length - n;
   const best = +store.get(BEST_KEY) || 0, isNew = score > best;
   if (isNew) store.set(BEST_KEY, score);
   sfx.end(isNew);
-  const msg = n === t ? 'Hoàn hảo, em ghép đúng tất cả.' : n >= t*0.8 ? 'Rất tốt. Xem lại vài chữ sai bên dưới nhé.' : 'Xem lại các chữ sai bên dưới rồi chơi lại nhé.';
-  /* Chữ sai lên trước để em xem lại trước */
-  const list = [...answers.filter(a => !a.ok), ...answers.filter(a => a.ok)];
-  const card = a => {
-    const q = a.q, mean = q.word ? `${q.vi} · trong từ ${q.word.replace(/□/g, q.c)} (${q.wpy})` : q.vi;
-    return `<div class="rv ${a.ok ? '' : 'bad'}">
+  /* Gộp theo chữ: mỗi chữ hiện một lần; chữ từng sai lên trước, sai nhiều lên trước nữa */
+  const by = new Map();
+  answers.forEach(a => {
+    const r = by.get(a.q.c) || {q:a.q, right:0, wrong:0, got:''};
+    if (a.ok) r.right++; else { r.wrong++; r.got = a.got; }
+    by.set(a.q.c, r);
+  });
+  const list = [...by.values()].sort((a,b) => b.wrong - a.wrong);
+  const seen = by.size, all = CHARS.length;
+  const head = endReason === 'lives' ? 'Hết mạng' : 'Hết giờ';
+  const msg = !answers.length ? 'Em chưa trả lời câu nào. Chơi lại nhé.'
+    : w === 0 && seen >= all ? 'Hoàn hảo, em ghép đúng hết mà không sai câu nào.'
+    : w === 0 ? 'Không sai câu nào. Lần sau làm nhanh hơn để đi hết các chữ nhé.'
+    : 'Xem lại các chữ sai bên dưới rồi chơi lại nhé.';
+  const card = r => {
+    const q = r.q, mean = q.word ? `${q.vi} · trong từ ${q.word.replace(/□/g, q.c)} (${q.wpy})` : q.vi;
+    return `<div class="rv ${r.wrong ? 'bad' : ''}">
       <div class="rv-h"><span class="hanzi">${q.c}</span><span class="p">${q.py}</span><span>${esc(mean)}</span>
-        <span class="mark">${a.ok ? 'Đúng' : 'Sai'}</span></div>
-      ${a.ok ? '' : `<div class="rv-got">Em chọn: <span class="hanzi">${esc(a.got)}</span></div>`}
+        <span class="mark">${r.wrong ? `Sai ${r.wrong} lần` : 'Đúng'}</span></div>
+      ${r.wrong ? `<div class="rv-got">Em chọn: <span class="hanzi">${esc(r.got)}</span></div>` : ''}
       <div class="rv-parts">${q.parts.map(p => `<span><b class="hanzi">${p}</b><i>${partPy(p)}</i>${esc(PART[p][1])}</span>`).join('')}</div>
       <div class="struct">Cấu trúc: ${q.st}</div></div>`;
   };
   app.innerHTML = `<div class="panel">
+    <p class="end-why">${head}</p>
     <div class="big">${score}</div><p>điểm · ${esc(playerName)}, lớp ${esc(playerClass)}</p>
     <p class="send" id="sendSt"></p>
-    <div class="stats"><span><b>${n}/${t}</b>câu đúng</span><span><b>${bestStreak}</b>chuỗi đúng dài nhất</span></div>
+    <div class="stats"><span><b>${n}</b>câu đúng</span><span><b>${w}</b>câu sai</span><span><b>${bestStreak}</b>chuỗi dài nhất</span><span><b>${seen}/${all}</b>chữ đã gặp</span></div>
     <p>${msg}${isNew ? ' Kỷ lục mới trên máy này!' : ''}</p>
     <div class="acts"><button class="btn solid" id="again">Chơi lại</button></div>
-    <h3 class="rv-title">Xem lại từng chữ</h3>
-    ${list.map(card).join('')}
-    <div class="acts"><button class="btn solid" id="again2">Chơi lại</button></div></div>`;
-  $('again2').onclick = restart;
-  window.scrollTo({top: Math.max(0, scrollY + app.getBoundingClientRect().top - 8), behavior: 'smooth'});
+    ${list.length ? `<h3 class="rv-title">Xem lại từng chữ</h3>${list.map(card).join('')}
+    <div class="acts"><button class="btn solid" id="again2">Chơi lại</button></div>` : ''}</div>`;
   $('again').onclick = restart;
+  if ($('again2')) $('again2').onclick = restart;
+  window.scrollTo({top: Math.max(0, scrollY + app.getBoundingClientRect().top - 8), behavior: 'smooth'});
   submit();
 }
 
@@ -371,9 +406,9 @@ function submit(){
   const body = {
     action:'submit', lesson:LESSON, phanLoai:'game', bai:D.id,
     hoTenHocSinh:playerName, lop:playerClass, attemptId,
-    score, total:qs.length, bestStreak,
+    score, total:answers.length, bestStreak,
     durationSeconds: Math.round((Date.now() - playStart) / 1000),
-    mode:'dinh-luyen-chu', poolTotal:CHARS.length, timeout:false,
+    mode:'dinh-luyen-chu-lien-tuc', poolTotal:CHARS.length, timeout: endReason === 'time',
     chiTiet: log
   };
   fetch(SHEET_URL, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:JSON.stringify(body)})
